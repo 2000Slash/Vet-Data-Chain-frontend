@@ -111,8 +111,12 @@ const FarmerDashboard: React.FC = () => {
             {searchResults.length > 0 && (
               <div className="search-results">
                 {searchResults.map((result, index) => (
-                  <div key={index} className="search-result-item">
-                    {/* Render your search results here */}
+                  <div
+                    key={`search-result-${index}`}
+                    className="search-result-item"
+                  >
+                    <h3>{result.title}</h3>
+                    {/* Add additional result content as needed */}
                   </div>
                 ))}
               </div>

@@ -215,7 +215,7 @@ body {
 
 .modal-content {
   background-color: #d9d9d9;
-  padding: 2rem;
+  padding: 5rem 2.5rem;
   border-radius: 8px;
   position: relative;
   width: 90%;
@@ -230,6 +230,7 @@ body {
   background: none;
   border: none;
   font-size: 1.5rem;
+  font-weight: 800;
   cursor: pointer;
   color: #333;
   padding: 0.5rem;
@@ -240,14 +241,14 @@ body {
 }
 
 .modal-close:hover {
-  transform: translateX(-2px);
+  transform: translateX(-3px);
 }
 
 .modal-content p {
   text-align: center;
   margin: 1rem 0;
   line-height: 1.5;
-  color: #333;
+  color: #333333;
 }
 
 /* Update existing info-icon styles */

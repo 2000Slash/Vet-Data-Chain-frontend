@@ -5,8 +5,18 @@ import YAML from "yaml";
 import axios from "axios";
 import "./styles/styles.css";
 
+interface LoginFileData {
+  identName: string;
+  rolle: string;
+  nodeUrl: string;
+  walletAddress: string;
+  publicKey: string;
+  privateKey: string;
+  seed: string;
+}
+
 const Login: React.FC = () => {
-  const [fileData, setFileData] = useState<any>(null);
+  const [fileData, setFileData] = useState<LoginFileData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<
     "idle" | "success" | "error"

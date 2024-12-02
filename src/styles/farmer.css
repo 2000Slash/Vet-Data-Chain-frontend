@@ -8,7 +8,7 @@
 
 .dashboard-header {
   background-color: #4a4a4a;
-  padding: 1rem 2rem;
+  padding: 1rem 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -92,7 +92,7 @@
 .search-container {
   position: relative;
   width: 400px;
-  margin-top: 3rem; /* Space for balance above */
+  margin-top: 1rem;
   margin-left: 1rem;
 }
 
