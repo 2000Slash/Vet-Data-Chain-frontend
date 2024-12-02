@@ -1,14 +1,13 @@
+// App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./login";
-import AdminPage from "./vet";
-
+import FarmerDashboard from "./farmer";
 
 const App: React.FC = () => (
   <Router>
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/vet" element={<AdminPage />} />
-
+      <Route path="/farmer" element={<FarmerDashboard />} />
     </Routes>
   </Router>
 );
