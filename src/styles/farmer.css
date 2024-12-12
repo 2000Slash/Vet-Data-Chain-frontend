@@ -89,6 +89,14 @@
   color: #333;
 }
 
+.balance-box i#WalletIcon {
+  /* Icon specific styles */
+  font-size: 20px;
+  color: #333;
+  padding-right: 15px;
+  align-content: space-around;
+}
+
 .search-container {
   position: relative;
   width: 400px;
@@ -203,6 +211,12 @@
 /* Search input styles */
 input::placeholder {
   color: #666;
+}
+
+.search-button i.bi-search {
+  /* Icon specific styles */
+  font-size: 18px;
+  color: #333;
 }
 
 /* Responsive adjustments */

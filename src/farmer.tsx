@@ -1,8 +1,8 @@
-// farmer.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/farmer.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const FarmerDashboard: React.FC = () => {
   const [balance, setBalance] = useState<string>("0");
@@ -75,7 +75,10 @@ const FarmerDashboard: React.FC = () => {
 
         <main className="main-content-farmer">
           <div className="balance-container">
-            <div className="balance-box">Balance: {balance}</div>
+            <div className="balance-box">
+              <i className="bi bi bi-wallet2" id="WalletIcon"></i>
+              Balance: {balance}
+            </div>
           </div>
 
           <div className="search-container">
@@ -93,17 +96,7 @@ const FarmerDashboard: React.FC = () => {
                 onClick={handleSearch}
                 aria-label="Search"
               >
-                <svg
-                  className="search-icon"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
-                  />
-                </svg>
+                <i className="bi bi-search"></i>
               </button>
             </div>
 
