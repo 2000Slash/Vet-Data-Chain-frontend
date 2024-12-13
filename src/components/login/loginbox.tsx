@@ -7,7 +7,7 @@ const Login_box = () => {
   const rerouting = async () =>{
       try{
           let accountdata = JSON.parse(localStorage.getItem("keeperWalletPublicState"))
-          const key = "Role";
+          const key = "role";
           const adress = accountdata.account.address;
           const nodeUrl = accountdata.network.server;
           let role = await nodeInteraction.accountDataByKey(key,adress, nodeUrl )
