@@ -1,4 +1,3 @@
-import React from 'react';
 import "../../styles/styles.css"
 
 const InfoBox_Text = ({ title, content }: { title: string; content: string }) => {

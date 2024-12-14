@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import InfoBox_Text from "../components/login/infobox";
 import Login_box from '../components/login/loginbox';

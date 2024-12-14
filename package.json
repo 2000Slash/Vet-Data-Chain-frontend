@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@waves/waves-transactions": "^4.3.11",
+    "@waves/waveskeeper-types": "^0.2.7",
     "axios": "^1.7.8",
     "bootstrap-icons": "^1.11.3",
+    "bs58": "^6.0.0",
+    "native": "^0.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.2",

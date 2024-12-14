@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import searchLineIcon from '../assets/search-line-icon.svg'
 
 const SearchBar: React.FC = () => {
