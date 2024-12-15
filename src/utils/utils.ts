@@ -1,5 +1,6 @@
+import { address } from '@waves/ts-lib-crypto';
+import { nodeInteraction } from '@waves/waves-transactions';
 import axios from 'axios';
-import bs58 from 'bs58';
 
 function customEncodeURIComponent(str: string): string {
     return encodeURIComponent(str)
@@ -18,7 +19,7 @@ export async function fetchRegexData(nodeURL: string, walletAddress: string, reg
               'accept': 'application/json',
           },
       });
-    return response.data; 
+    return String(response.data); 
   } catch (error) {
       console.error('Error fetching data:', error);
   }
@@ -33,7 +34,7 @@ export async function getKeeperWalletAddress(): Promise<string> {
       if (!address) {
         throw new Error('Wallet address is null or undefined.');
       }
-      return address;
+      return String(address);
     } catch (error) {
       console.error('Error fetching wallet address:', error);
       throw error;
@@ -47,21 +48,21 @@ export async function getKeeperWalletAddress(): Promise<string> {
       if (!publicKey) {
         throw new Error('Public key is null or undefined.');
       }
-      return publicKey;
+      return String(publicKey);
     } catch (error) {
       console.error('Error fetching public key:', error);
       throw error;
     }
   }
   
-  export async function getKeeperWalletPrivateKey(): Promise<string> {
+  export async function keeperWalletEncrypt(): Promise<string> {
     try {
       const state = await KeeperWallet.publicState();
       const privateKey = state.account?.privateKey;
       if (!privateKey) {
         throw new Error('Private key is null or undefined.');
       }
-      return privateKey;
+      return String(privateKey);
     } catch (error) {
       console.error('Error fetching private key:', error);
       throw error;
@@ -75,7 +76,7 @@ export async function getKeeperWalletAddress(): Promise<string> {
       if (!nodeUrl) {
         throw new Error('Node URL is null or undefined.');
       }
-      return nodeUrl;
+      return String(nodeUrl);
     } catch (error) {
       console.error('Error fetching URL:', error);
       throw error;
@@ -89,7 +90,7 @@ export async function getKeeperWalletAddress(): Promise<string> {
       if (!network) {
         throw new Error('Network letter is null or undefined.');
       }
-      return network;
+      return String(network);
     } catch (error) {
       console.error('Error fetching network letter:', error);
       throw error;
@@ -112,6 +113,57 @@ export async function getKeeperWalletAddress(): Promise<string> {
   } catch (error) {
       console.error('Error fetching transactions:', error);
       throw error; 
+  }
+}
+
+export async function getPendingAaDList(): Promise<string>{
+  try {
+            const farmerWalletadress = await getKeeperWalletAddress();
+            const farmerWalletPublicKey = await getKeeperWalletPublicKey();
+            const nodeUrl = await getKeeperWalletURL();
+            const pubKey_vet_office = (await nodeInteraction.accountDataByKey("publicKeyVetOffice",farmerWalletadress,nodeUrl)).value
+            const walletAddress_vet_office = address({publicKey: pubKey_vet_office}, 'T'); 
+            const key = farmerWalletPublicKey+"_pending"
+  
+            const data = await nodeInteraction.accountDataByKey(key,walletAddress_vet_office, nodeUrl )
+            return data.value
+  
+        } catch (err: any) {
+          console.log(err.message || 'An unknown error occurred');
+        } 
+
+}
+
+export async function getAaDRecord(aaDKey:string) {
+  try {
+            const farmerWalletadress = await getKeeperWalletAddress();
+            const nodeUrl = await getKeeperWalletURL();
+            const pubKey_vet_office = (await nodeInteraction.accountDataByKey("publicKeyVetOffice",farmerWalletadress,nodeUrl)).value
+            const walletAddress_vet_office = address({publicKey: pubKey_vet_office}, 'T'); 
+            const data = await nodeInteraction.accountDataByKey(aaDKey,walletAddress_vet_office, nodeUrl )
+            return data.value
+          } catch (err: any) {
+            console.log(err.message || 'An unknown error occurred');
+          } 
+            
+}
+
+export async function decodeMessage(encryptedMessage: string, senderPublicKey: string) {
+  console.log(encryptedMessage)
+  console.log(senderPublicKey)
+  console.log("Calling decodeMessage function...");
+  try {
+    console.log("we are in the try block")
+    const message = await KeeperWallet.decryptMessage(
+      encryptedMessage,
+      senderPublicKey,
+      'localhost'
+    );
+    console.log(message);
+    return message;
+  } catch (error) {
+    console.error('Error decoding message:', error);
+    throw error; 
   }
 }
 

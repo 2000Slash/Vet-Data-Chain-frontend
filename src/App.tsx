@@ -1,9 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import React, { createContext, useContext, useState } from 'react';
 import Login from "./pages/login_page";
 import Vetenary_office from "./pages/vetenary_office_page"
 import Farmer from "./pages/farmer_page";
-import useStore from './store.tsx'
+
 
 
 const App: React.FC = () => (
