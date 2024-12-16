@@ -1,5 +1,6 @@
-import { address } from '@waves/ts-lib-crypto';
+import { address, base58Encode } from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
+import { libs } from "@waves/waves-transactions";
 import axios from 'axios';
 
 function customEncodeURIComponent(str: string): string {
@@ -147,17 +148,19 @@ export async function getAaDRecord(aaDKey:string) {
           } 
             
 }
-
+/**
 export async function decodeMessage(encryptedMessage: string, senderPublicKey: string) {
   console.log(encryptedMessage)
   console.log(senderPublicKey)
   console.log("Calling decodeMessage function...");
+  senderPublicKey = "GLUBVaLEFpqYfXtvsykcswF7TMLChVifJ97Fn91Jexe7"
+    const context = "waves";
   try {
     console.log("we are in the try block")
     const message = await KeeperWallet.decryptMessage(
-      encryptedMessage,
+      String(encryptedMessage),
       senderPublicKey,
-      'localhost'
+      context
     );
     console.log(message);
     return message;
@@ -165,7 +168,33 @@ export async function decodeMessage(encryptedMessage: string, senderPublicKey: s
     console.error('Error decoding message:', error);
     throw error; 
   }
-}
+}*/
+
+export async function decodeMessage(encryptedMessage: string, senderPublicKey: string){
+  try {
+    console.log("Starting decryption...");
+
+    const receiverPrivateKey = "1gvsUBKFPrjmR9RkWgLiVEY5rjMAuaBYHkT7sW4rTUu";
+    senderPublicKey = "GLUBVaLEFpqYfXtvsykcswF7TMLChVifJ97Fn91Jexe7"
+    const context = "waves";
+
+    const sharedKey = libs.crypto.sharedKey(
+      receiverPrivateKey, 
+      senderPublicKey, 
+      context
+    );
+
+    console.log("Shared Key:", sharedKey);
+
+    const decryptedMessage = libs.crypto.messageDecrypt(sharedKey, encryptedMessage);
+
+    console.log("Decrypted Message:", decryptedMessage);
+    return decryptedMessage;
+  } catch (error) {
+    console.error("Error decoding message:", error);
+    throw error;
+  }
+};
 
 
 export default fetchRegexData;

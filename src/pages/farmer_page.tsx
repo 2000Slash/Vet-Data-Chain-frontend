@@ -20,7 +20,7 @@ const Farmer_Page = () => {
 
   return (
     <div>
-    <Header/>
+    <Header role="Farmer"/>
     <InfoBox_Text title="Vet-Data-Chain" content="This is the Farmer page"/>
     <Pending_List></Pending_List>
     

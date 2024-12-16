@@ -5,6 +5,7 @@ import { getKeeperWalletURL, getKeeperWalletAddress } from "../../utils/utils";
 
 const Login_box = () => {
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const handleKeeperWalletLogin = async () => {
@@ -25,13 +26,28 @@ const Login_box = () => {
 
   return (
     <div className="card login-card">
-      <div className="info-icon">i</div>
+      <div className="info-icon" onClick={() => setShowModal(true)}>
+      i
+      </div>
       <div className="upload-section">
         <p>Please log in with your Keeper Wallet account.</p>
       </div>
       <button className="login-button" onClick={handleKeeperWalletLogin}>
         Login
       </button>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="modal-close" onClick={() => setShowModal(false)}>
+              🡐
+            </button>
+            <p>
+              If you have not yet received your credentials file, please contact
+              your responsible veterinary office.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
