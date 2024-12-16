@@ -14,6 +14,8 @@
 }
 
 body {
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
   background-color: var(--primary-bg);
   min-height: 100vh;
@@ -23,20 +25,24 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .header {
   background-color: var(--header-bg);
-  padding: 1rem;
   color: white;
+  padding: 1rem;
   width: 100%;
   position: fixed;
   top: 0;
   display: flex;
-  z-index: 1000;
   align-items: center;
-  justify-content: center;
-  align-content: center;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+.role-display {
+  min-width: 150px;
 }
 
 .logo-container {
@@ -44,21 +50,22 @@ body {
   align-items: center;
   gap: 1rem;
   justify-content: center;
-  align-content: center;
 }
 
 .logo-circle {
-  width: 40px;
-  height: 40px;
-  background-color: #ffffff;
+  width: 50px;
+  height: 50px;
+  background-color: white;
   border-radius: 50%;
+  align-items: center;
+  align-content: center;
 }
 
 .main-content {
   display: flex;
   justify-content: center;
-  align-items: start;
-  gap: 2rem;
+  align-items: center;
+  width: 100%;
   padding: 2rem;
   margin-top: 4rem;
 }
@@ -80,6 +87,7 @@ body {
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
   margin: -1px;
+  text-align: center;
 }
 
 .info-card {
@@ -119,6 +127,7 @@ body {
 .upload-section {
   text-align: center;
   width: 100%;
+  margin-top: 20px;
 }
 
 .upload-section p {
@@ -126,7 +135,7 @@ body {
 }
 
 .login-icon {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
   color: #333333;
 }
