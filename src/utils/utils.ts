@@ -1,7 +1,19 @@
-import { address, base58Encode } from '@waves/ts-lib-crypto';
+import { address, base58Decode} from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
 import { libs } from "@waves/waves-transactions";
 import axios from 'axios';
+import {
+   // base58 -> uInt8
+  base58Encode, // uInt8 -> base58
+  createSharedKey,
+  decryptMessage,
+  encryptMessage,
+  createPrivateKey,
+  createPublicKey,
+  createAddress,
+  utf8Encode, // string -> uInt8
+  utf8Decode, // uInt8 -> String
+} from "@keeper-wallet/waves-crypto";
 
 function customEncodeURIComponent(str: string): string {
     return encodeURIComponent(str)
@@ -148,17 +160,17 @@ export async function getAaDRecord(aaDKey:string) {
           } 
             
 }
-/**
+
 export async function decodeMessage(encryptedMessage: string, senderPublicKey: string) {
   console.log(encryptedMessage)
   console.log(senderPublicKey)
   console.log("Calling decodeMessage function...");
-  senderPublicKey = "GLUBVaLEFpqYfXtvsykcswF7TMLChVifJ97Fn91Jexe7"
+  senderPublicKey = "at7EKvuDyAq6bTcre5tB3NxWUhzp7jNi4Vq4CmN7UnL"
     const context = "waves";
   try {
     console.log("we are in the try block")
     const message = await KeeperWallet.decryptMessage(
-      String(encryptedMessage),
+      encryptedMessage,
       senderPublicKey,
       context
     );
@@ -168,8 +180,8 @@ export async function decodeMessage(encryptedMessage: string, senderPublicKey: s
     console.error('Error decoding message:', error);
     throw error; 
   }
-}*/
-
+}
+/*
 export async function decodeMessage(encryptedMessage: string, senderPublicKey: string){
   try {
     console.log("Starting decryption...");
@@ -195,6 +207,6 @@ export async function decodeMessage(encryptedMessage: string, senderPublicKey: s
     throw error;
   }
 };
-
+*/
 
 export default fetchRegexData;

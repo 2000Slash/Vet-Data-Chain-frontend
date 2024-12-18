@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@keeper-wallet/waves-crypto": "^3.0.8",
     "@waves/waves-transactions": "^4.3.11",
     "@waves/waveskeeper-types": "^0.2.7",
     "axios": "^1.7.8",
