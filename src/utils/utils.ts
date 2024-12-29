@@ -15,16 +15,16 @@ import {
   utf8Decode, // uInt8 -> String
 } from "@keeper-wallet/waves-crypto";
 
-function customEncodeURIComponent(str: string): string {
-    return encodeURIComponent(str)
-        .replace(/\*/g, '%2A') // Encode '*'
-        .replace(/\^/g, '%5E') // Encode '^'
-        .replace(/\$/g, '%24'); // Encode '$' Nils zeigen wie er ohne das macht
-}
+
+const vetOfficeAddress = "3N3ZZJgQ6ob6xp2cJJx7bMqsYaiimq6d1YF"
+const vetOfficepubKey = "7JyBiP5kR1ayLVXD9TdFTT79ArC9g8iBpdYXRBnLCmVH"
+const vetPublicKey = "G1cF1XFqwsKVGnWqLNh9y3fWrcUwsemo5LaqfabHC2Ww"
+
 
 export async function fetchRegexData(nodeURL: string, walletAddress: string, regex: string) {
+
   try {
-      const response = await axios.get(`${nodeURL}/addresses/data/${walletAddress}`, {
+      const response = await axios.get(`${nodeURL}addresses/data/${walletAddress}`, {
           params: {
               matches: regex,
           },
@@ -32,7 +32,7 @@ export async function fetchRegexData(nodeURL: string, walletAddress: string, reg
               'accept': 'application/json',
           },
       });
-    return String(response.data); 
+    return response; 
   } catch (error) {
       console.error('Error fetching data:', error);
   }
@@ -68,19 +68,6 @@ export async function getKeeperWalletAddress(): Promise<string> {
     }
   }
   
-  export async function keeperWalletEncrypt(): Promise<string> {
-    try {
-      const state = await KeeperWallet.publicState();
-      const privateKey = state.account?.privateKey;
-      if (!privateKey) {
-        throw new Error('Private key is null or undefined.');
-      }
-      return String(privateKey);
-    } catch (error) {
-      console.error('Error fetching private key:', error);
-      throw error;
-    }
-  }
   
   export async function getKeeperWalletURL(): Promise<string> {
     try {
@@ -111,22 +98,8 @@ export async function getKeeperWalletAddress(): Promise<string> {
   }
 
 
-  export async function getPublicKeyVeterinaryOffice(): Promise<string> {
-    const baseURL = await getKeeperWalletURL();
-    const address = await getKeeperWalletAddress();
-    const limit = 1;
-    try {
-      const response = await axios.get(`${baseURL}transactions/address/${address}/limit/${limit}`, {
-          headers: {
-              'accept': 'application/json',
-          },
-      });
-
-      return response.data; 
-  } catch (error) {
-      console.error('Error fetching transactions:', error);
-      throw error; 
-  }
+  export function getPublicKeyVeterinaryOffice(): string {
+    return vetOfficepubKey
 }
 
 export async function getPendingAaDList(): Promise<string>{
@@ -134,12 +107,12 @@ export async function getPendingAaDList(): Promise<string>{
             const farmerWalletadress = await getKeeperWalletAddress();
             const farmerWalletPublicKey = await getKeeperWalletPublicKey();
             const nodeUrl = await getKeeperWalletURL();
-            const pubKey_vet_office = (await nodeInteraction.accountDataByKey("publicKeyVetOffice",farmerWalletadress,nodeUrl)).value
+            const pubKey_vet_office = getPublicKeyVeterinaryOffice();
             const walletAddress_vet_office = address({publicKey: pubKey_vet_office}, 'T'); 
             const key = farmerWalletPublicKey+"_pending"
   
             const data = await nodeInteraction.accountDataByKey(key,walletAddress_vet_office, nodeUrl )
-            return data.value
+            return String(data.value)
   
         } catch (err: any) {
           console.log(err.message || 'An unknown error occurred');
@@ -152,7 +125,7 @@ export async function getAaDRecord(aaDKey:string) {
             const farmerWalletadress = await getKeeperWalletAddress();
             const nodeUrl = await getKeeperWalletURL();
             const pubKey_vet_office = (await nodeInteraction.accountDataByKey("publicKeyVetOffice",farmerWalletadress,nodeUrl)).value
-            const walletAddress_vet_office = address({publicKey: pubKey_vet_office}, 'T'); 
+            const walletAddress_vet_office = vetOfficeAddress
             const data = await nodeInteraction.accountDataByKey(aaDKey,walletAddress_vet_office, nodeUrl )
             return data.value
           } catch (err: any) {
@@ -162,51 +135,30 @@ export async function getAaDRecord(aaDKey:string) {
 }
 
 export async function decodeMessage(encryptedMessage: string, senderPublicKey: string) {
-  console.log(encryptedMessage)
-  console.log(senderPublicKey)
-  console.log("Calling decodeMessage function...");
-  senderPublicKey = "at7EKvuDyAq6bTcre5tB3NxWUhzp7jNi4Vq4CmN7UnL"
-    const context = "waves";
+  const context = "vet-data-chain-"; 
+  
   try {
-    console.log("we are in the try block")
     const message = await KeeperWallet.decryptMessage(
-      encryptedMessage,
-      senderPublicKey,
-      context
+      encryptedMessage,    // The encrypted data (base58 string)
+      senderPublicKey,     // The sender's public key (base58 string)
+      context              // The prefix used during encryption
     );
-    console.log(message);
+    console.log("Decrypted message:", message);
     return message;
-  } catch (error) {
-    console.error('Error decoding message:', error);
-    throw error; 
-  }
-}
-/*
-export async function decodeMessage(encryptedMessage: string, senderPublicKey: string){
-  try {
-    console.log("Starting decryption...");
-
-    const receiverPrivateKey = "1gvsUBKFPrjmR9RkWgLiVEY5rjMAuaBYHkT7sW4rTUu";
-    senderPublicKey = "GLUBVaLEFpqYfXtvsykcswF7TMLChVifJ97Fn91Jexe7"
-    const context = "waves";
-
-    const sharedKey = libs.crypto.sharedKey(
-      receiverPrivateKey, 
-      senderPublicKey, 
-      context
-    );
-
-    console.log("Shared Key:", sharedKey);
-
-    const decryptedMessage = libs.crypto.messageDecrypt(sharedKey, encryptedMessage);
-
-    console.log("Decrypted Message:", decryptedMessage);
-    return decryptedMessage;
   } catch (error) {
     console.error("Error decoding message:", error);
     throw error;
   }
-};
-*/
+}
 
-export default fetchRegexData;
+export async function getMyVenearyPublicKey(aaDEntryKey: String) {
+
+  let aaDEntryKeyAsArray = aaDEntryKey.split("_")
+  const regexString = `^${aaDEntryKeyAsArray[0]}_.*_${aaDEntryKeyAsArray[1]}$`;
+  console.log(regexString)
+  const fetchedData = await fetchRegexData(await getKeeperWalletURL(),vetOfficeAddress,regexString)
+  let vetenaryEntryArray = fetchedData?.data[0].key.split("_");
+  return vetenaryEntryArray[1]
+}
+
+

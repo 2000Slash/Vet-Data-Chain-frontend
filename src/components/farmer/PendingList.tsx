@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getKeeperWalletPublicKey , getKeeperWalletAddress , getKeeperWalletURL, getPublicKeyVeterinaryOffice, calculateWavesAddress, getPendingAaDList, getAaDRecord, getKeeperWalletPrivateKey, decodeMessage} from '../../utils/utils'  
+import { getKeeperWalletPublicKey , getKeeperWalletAddress , getKeeperWalletURL, getPublicKeyVeterinaryOffice, getMyVenearyPublicKey ,calculateWavesAddress, getPendingAaDList, getAaDRecord, getKeeperWalletPrivateKey, decodeMessage} from '../../utils/utils'  
 import { nodeInteraction , libs} from "@waves/waves-transactions";
 import { address, keyPair, base58Encode, base58Decode, ChaidId , aesDecrypt} from '@waves/ts-lib-crypto';
 import useStore from '../../store';
@@ -37,23 +37,30 @@ const Pending_List: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   const loadPendingAuA = async (entry: string) => {
-    let title = `Pending Entry #${entry}`
-    let pubKeyFarmer = await getKeeperWalletPublicKey()
-    let requestKey = pubKeyFarmer+"_"+entry
-    let encodedData = String(await getAaDRecord(requestKey))
-    let farmerWalletadress = String(await getKeeperWalletAddress())
-    let nodeUrl = String(await getKeeperWalletURL())
-    const pubKey_vet_office= String((await nodeInteraction.accountDataByKey("publicKeyVetOffice",farmerWalletadress,nodeUrl)).value)
-    const pubKey_vet_officeA = String(await (nodeInteraction.accountDataByKey("publicKeyVetOffice",farmerWalletadress,nodeUrl)).value)
-    let decodedData = await decodeMessage(encodedData, pubKey_vet_office);
-    console.log("Decrypted Data:", decodedData);
-    setInfoBoxData({
-      title: title,
-      content: decodedData,
-    });
-
+    try {
+      let title = `Pending Entry #${entry}`;
+      let pubKeyFarmer = await getKeeperWalletPublicKey();
+      let requestKey = pubKeyFarmer + "_" + entry;
+      let encodedData = String(await getAaDRecord(requestKey));
+      let farmerWalletAddress = String(await getKeeperWalletAddress());
+      let nodeUrl = String(await getKeeperWalletURL());
+      const pubKey_vet_office = getPublicKeyVeterinaryOffice();
+      const vetenaryPublicKey = await getMyVenearyPublicKey(requestKey)
+      let decodedData = await decodeMessage(encodedData, vetenaryPublicKey);
+      console.log("Decrypted Data:", decodedData);
+      setInfoBoxData({
+        title: title,
+        content: decodedData,
+      });
+    } catch (error) {
+      console.error("Error loading pending AuA:", error);
+      setInfoBoxData({
+        title: "Error",
+        content: "An error occurred while loading the pending entry. Please try again.",
+      });
+    }
   };
-
+  
   return (
     <div>
       <h2>Pending AaD entries</h2>
