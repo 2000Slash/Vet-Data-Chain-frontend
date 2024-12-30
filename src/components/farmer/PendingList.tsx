@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import fetchRegexData from '../../utils/WavesRegexFetch'  
-import { nodeInteraction } from "@waves/waves-transactions";
+import { useState, useEffect } from 'react';
+import { getKeeperWalletPublicKey ,    getMyVenearyPublicKey , getPendingAaDList, getAaDRecord,  decodeMessage} from '../../utils/utils'  
 import useStore from '../../store';
+import InfoBox_Text from '../login/infobox';
+
+interface InfoBoxData {
+  title: string;
+  content: string;
+}
+
 
 const Pending_List: React.FC = () => {
-  const [pendingEntries, setPendingEntries] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null); // brauchen wir das???
   
-  //const current_table_reference = useStore((state) => state.current_table_reference);
-  const set_current_table_reference = useStore((state) => state.set_current_table_reference);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pendingEntries, setPendingEntries] = useState<string[]>([]);
+  const [infoBoxData, setInfoBoxData]  = useState<InfoBoxData>({title: '', content: ''});
+
+
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,19 +25,10 @@ const Pending_List: React.FC = () => {
       setError(null);
 
       try {
-          let accountdata = JSON.parse(localStorage.getItem("keeperWalletPublicState"))
-          let key = "associated_veterinary_office";
-          const farmerWalletadress = accountdata.account.address;
-          const nodeUrl = accountdata.network.server;
-          const walletAddress_vet_office = (await nodeInteraction.accountDataByKey(key,farmerWalletadress, nodeUrl )).value
-          console.log(walletAddress_vet_office)
-          key = farmerWalletadress+"_pending"
-
-          const data = await nodeInteraction.accountDataByKey(key,walletAddress_vet_office, nodeUrl )
-          setPendingEntries(data.value.split(","));
-
+          let pendingListAsString = getPendingAaDList()
+          setPendingEntries((await pendingListAsString).split(","));
       } catch (err: any) {
-        setError(err.message || 'An unknown error occurred');
+        console.log(err.message || 'An unknown error occurred');
       } finally {
         setLoading(false);
       }
@@ -41,13 +40,28 @@ const Pending_List: React.FC = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  const loadPendingAuA = (entry: string) => {
-    console.log(`Button clicked for entry: ${entry}`);
-    let reference = JSON.parse(localStorage.getItem("keeperWalletPublicState")).account.address+"_"+entry+"_F";
-    set_current_table_reference(reference);
-    alert(`You clicked on: ${useStore.getState().current_table_reference}`);
+  const loadPendingAuA = async (entry: string) => {
+    try {
+      let title = `Pending Entry #${entry}`;
+      let pubKeyFarmer = await getKeeperWalletPublicKey();
+      let requestKey = pubKeyFarmer + "_" + entry;
+      let encodedData = String(await getAaDRecord(requestKey));
+      const vetenaryPublicKey = await getMyVenearyPublicKey(requestKey)
+      let decodedData = await decodeMessage(encodedData, vetenaryPublicKey);
+      console.log("Decrypted Data:", decodedData);
+      setInfoBoxData({
+        title: title,
+        content: decodedData,
+      });
+    } catch (error) {
+      console.error("Error loading pending AuA:", error);
+      setInfoBoxData({
+        title: "Error",
+        content: "An error occurred while loading the pending entry. Please try again.",
+      });
+    }
   };
-
+  
   return (
     <div>
       <h2>Pending AaD entries</h2>
@@ -62,6 +76,7 @@ const Pending_List: React.FC = () => {
             ))}
         </ul>
       )}
+      {infoBoxData && <InfoBox_Text title={infoBoxData.title} content={infoBoxData.content} />}
     </div>
   );
 };
