@@ -53,10 +53,3 @@ const Login_box = () => {
 };
 
 export default Login_box;
-function asynch() {
-  throw new Error("Function not implemented.");
-}
-
-function setLoading(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}

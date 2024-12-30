@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
-import { getKeeperWalletPublicKey , getKeeperWalletAddress , getKeeperWalletURL, getPublicKeyVeterinaryOffice, getMyVenearyPublicKey ,calculateWavesAddress, getPendingAaDList, getAaDRecord, getKeeperWalletPrivateKey, decodeMessage} from '../../utils/utils'  
-import { nodeInteraction , libs} from "@waves/waves-transactions";
-import { address, keyPair, base58Encode, base58Decode, ChaidId , aesDecrypt} from '@waves/ts-lib-crypto';
+import { getKeeperWalletPublicKey ,    getMyVenearyPublicKey , getPendingAaDList, getAaDRecord,  decodeMessage} from '../../utils/utils'  
 import useStore from '../../store';
 import InfoBox_Text from '../login/infobox';
 
-const Pending_List: React.FC = () => {
-  const [pendingEntries, setPendingEntries] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null); // brauchen wir das???
+interface InfoBoxData {
+  title: string;
+  content: string;
+}
 
-  const setInfoBoxData = useStore((state) => state.setInfoBoxData);
-  const infoBoxData = useStore((state) => state.infoBoxData);
+
+const Pending_List: React.FC = () => {
   
-  const set_current_table_reference = useStore((state) => state.set_current_table_reference);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pendingEntries, setPendingEntries] = useState<string[]>([]);
+  
+  
+  const [infoBoxData, setInfoBoxData]  = useState<InfoBoxData>({title: '', content: ''});
+
+
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,9 +48,6 @@ const Pending_List: React.FC = () => {
       let pubKeyFarmer = await getKeeperWalletPublicKey();
       let requestKey = pubKeyFarmer + "_" + entry;
       let encodedData = String(await getAaDRecord(requestKey));
-      let farmerWalletAddress = String(await getKeeperWalletAddress());
-      let nodeUrl = String(await getKeeperWalletURL());
-      const pubKey_vet_office = getPublicKeyVeterinaryOffice();
       const vetenaryPublicKey = await getMyVenearyPublicKey(requestKey)
       let decodedData = await decodeMessage(encodedData, vetenaryPublicKey);
       console.log("Decrypted Data:", decodedData);
