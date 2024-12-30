@@ -14,8 +14,6 @@ const Pending_List: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingEntries, setPendingEntries] = useState<string[]>([]);
-  
-  
   const [infoBoxData, setInfoBoxData]  = useState<InfoBoxData>({title: '', content: ''});
 
 
