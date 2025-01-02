@@ -1,11 +1,12 @@
-import  { useState } from 'react';
-import searchLineIcon from '../assets/search-line-icon.svg'
+import { useState } from "react";
+import "../../styles/styles.css";
+import "../../styles/details/SearchBar.css";
 
 const SearchBar: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = () => {
-    console.log('Search term:', searchTerm);
+    console.log("Search term:", searchTerm);
   };
 
   return (
@@ -23,13 +24,7 @@ const SearchBar: React.FC = () => {
           onClick={handleSearch}
           aria-label="Search"
         >
-          <img
-            className="search-line-icon"
-            src={searchLineIcon}
-            alt="Search Icon"
-            width="24"
-            height="24"
-          />
+          Search
         </button>
       </div>
     </div>

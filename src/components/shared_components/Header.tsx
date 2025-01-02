@@ -1,14 +1,16 @@
+import "../../styles/styles.css";
+import "../../styles/details/Header.css";
+
 type HeaderProps = {
   role?: string;
 };
 
 const Header = ({ role = "" }: HeaderProps) => {
   if (role) {
-
     return (
       <div className="header profile-header">
         <div className="role-text">
-          <h1>{role}</h1>
+          <h2>{role}</h2>
         </div>
         <div className="logo-container">
           <div className="logo-circle"></div>
