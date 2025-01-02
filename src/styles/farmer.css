@@ -243,3 +243,36 @@ input::placeholder {
     margin-bottom: 1rem;
   }
 }
+.role-text {
+  color: white;
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.content-wrapper-farmer {
+  padding-top: 2rem;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+}
+
+.content-box {
+  flex: 1;
+  max-width: 500px;
+}
+
+/*  mobile  */
+@media (max-width: 768px) {
+  .side-by-side-container {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .content-box {
+    width: 100%;
+  }
+}

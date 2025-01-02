@@ -32,3 +32,5 @@ const Header = ({ role = "" }: HeaderProps) => {
 };
 
 export default Header;
+
+export default Header;

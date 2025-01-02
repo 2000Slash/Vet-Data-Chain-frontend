@@ -4,7 +4,7 @@ import Header from "../components/shared_components/Header";
 const Vetenary_office_Page = () => {
   return (
     <div>
-      <Header />
+      <Header role="Vetenary office" />
       <InfoBox_Text
         title="Vet-Data-Chain"
         content="This is the vetenary_office page"
