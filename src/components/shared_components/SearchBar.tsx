@@ -1,11 +1,12 @@
-import  { useState } from 'react';
-import searchLineIcon from '../assets/search-line-icon.svg'
+import { useState } from "react";
+import searchLineIcon from "../../../public/search.svg";
+import "../../styles/details/SearchBar.css";
 
 const SearchBar: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = () => {
-    console.log('Search term:', searchTerm);
+    console.log("Search term:", searchTerm);
   };
 
   return (

@@ -2,6 +2,8 @@ import { nodeInteraction } from "@waves/waves-transactions";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getKeeperWalletURL, getKeeperWalletAddress } from "../../utils/utils";
+import "../../styles/styles.css";
+import "../../styles/details/loginbox.css";
 
 const Login_box = () => {
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,10 @@ const Login_box = () => {
   return (
     <div className="card login-card">
       <div className="info-icon" onClick={() => setShowModal(true)}>
-      i
+        i
+      </div>
+      <div className="login-icon">
+        <img src="/public/login-2.png" alt="login-icon" />
       </div>
       <div className="upload-section">
         <p>Please log in with your Keeper Wallet account.</p>

@@ -1,10 +1,11 @@
+import "../../styles/details/Header.css";
+
 type HeaderProps = {
   role?: string;
 };
 
 const Header = ({ role = "" }: HeaderProps) => {
   if (role) {
-
     return (
       <div className="header profile-header">
         <div className="role-text">

@@ -1,6 +1,13 @@
-import "../../styles/styles.css"
+import "../../styles/styles.css";
+import "../../styles/details/infobox.css";
 
-const InfoBox_Text = ({ title, content }: { title: string; content: string }) => {
+const InfoBox_Text = ({
+  title,
+  content,
+}: {
+  title: string;
+  content: string;
+}) => {
   return (
     <div className="card info-card">
       <div className="card-header">
@@ -12,5 +19,3 @@ const InfoBox_Text = ({ title, content }: { title: string; content: string }) =>
 };
 
 export default InfoBox_Text;
-
-

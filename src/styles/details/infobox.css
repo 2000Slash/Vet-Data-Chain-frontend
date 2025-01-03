@@ -1,0 +1,38 @@
+:root {
+  --primary-bg: #bad8f0;
+  --header-bg: #4a4a4a;
+  --card-bg: #d9d9d9;
+  --text-primary: #333333;
+  --border-radius: 8px;
+}
+
+.info-card {
+  max-width: 500px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-card .card-header {
+  background-color: var(--header-bg);
+  color: white;
+  padding: 1rem;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  margin: -1px;
+  text-align: center;
+}
+
+.info-card .card-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 2rem;
+}
+
+.info-card p {
+  background-color: var(--card-bg);
+  margin: 0;
+  padding: 25px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
