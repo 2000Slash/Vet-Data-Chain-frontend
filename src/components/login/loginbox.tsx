@@ -5,25 +5,41 @@ import { getKeeperWalletURL, getKeeperWalletAddress } from "../../utils/utils";
 import "../../styles/styles.css";
 import "../../styles/details/loginbox.css";
 
+import "../../styles/styles.css";
+import "../../styles/details/loginbox.css";
+
 const Login_box = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
-  const handleKeeperWalletLogin = async () => {
-    setLoading(true);
-    const key = "role";
-    const address = await getKeeperWalletAddress();
-    const nodeUrl = await getKeeperWalletURL();
-
-    let role = await nodeInteraction.accountDataByKey(key, address, nodeUrl);
-    console.log(role);
-    if (role && role.value) {
+  const rerouting = async () => {
+    try {
+      let accountdata = JSON.parse(
+        localStorage.getItem("keeperWalletPublicState")
+      );
+      const key = "role";
+      const adress = accountdata.account.address;
+      const nodeUrl = accountdata.network.server;
+      let role = await nodeInteraction.accountDataByKey(key, adress, nodeUrl);
+      console.log(role);
       navigate(`/${role.value}`);
-      setLoading(false);
-    } else {
-      console.error("Role is null or value is undefined.");
+    } catch (error) {
+      console.error("Error in reroute:", error);
     }
+  };
+
+  const handleKeeperWalletLogin = () => {
+    KeeperWallet.publicState()
+      .then((state) => {
+        setLoading(true);
+        console.log(state);
+        localStorage.setItem("keeperWalletPublicState", JSON.stringify(state));
+        rerouting();
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -40,19 +56,6 @@ const Login_box = () => {
       <button className="login-button" onClick={handleKeeperWalletLogin}>
         Login
       </button>
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button className="modal-close" onClick={() => setShowModal(false)}>
-              🡐
-            </button>
-            <p>
-              If you have not yet received your credentials file, please contact
-              your responsible veterinary office.
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

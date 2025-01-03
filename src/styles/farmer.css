@@ -89,6 +89,14 @@
   color: #333;
 }
 
+.balance-box i#WalletIcon {
+  /* Icon specific styles */
+  font-size: 20px;
+  color: #333;
+  padding-right: 15px;
+  align-content: space-around;
+}
+
 .search-container {
   position: relative;
   width: 400px;
@@ -205,6 +213,12 @@ input::placeholder {
   color: #666;
 }
 
+.search-button i.bi-search {
+  /* Icon specific styles */
+  font-size: 18px;
+  color: #333;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .sidebar {
@@ -227,5 +241,38 @@ input::placeholder {
     width: 100%;
     position: static;
     margin-bottom: 1rem;
+  }
+}
+.role-text {
+  color: white;
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.content-wrapper-farmer {
+  padding-top: 2rem;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+}
+
+.content-box {
+  flex: 1;
+  max-width: 500px;
+}
+
+/*  mobile  */
+@media (max-width: 768px) {
+  .side-by-side-container {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .content-box {
+    width: 100%;
   }
 }

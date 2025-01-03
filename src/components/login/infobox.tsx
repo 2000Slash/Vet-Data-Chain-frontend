@@ -11,7 +11,7 @@ const InfoBox_Text = ({
   return (
     <div className="card info-card">
       <div className="card-header">
-        <h2>{title}</h2>
+        <h3>{title}</h3>
       </div>
       <p>{content}</p>
     </div>

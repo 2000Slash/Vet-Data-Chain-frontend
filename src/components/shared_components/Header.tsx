@@ -9,7 +9,7 @@ const Header = ({ role = "" }: HeaderProps) => {
     return (
       <div className="header profile-header">
         <div className="role-text">
-          <h1>{role}</h1>
+          <h2>{role}</h2>
         </div>
         <div className="logo-container">
           <div className="logo-circle"></div>

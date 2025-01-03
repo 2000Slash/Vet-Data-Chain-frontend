@@ -70,7 +70,7 @@ const Pending_List: React.FC = () => {
 
   return (
     <div>
-      <h2>Pending AaD entries</h2>
+      <h3>Pending AaD entries</h3>
       {pendingEntries.length === 0 ? (
         <p>No key-value pairs found.</p>
       ) : (

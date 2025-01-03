@@ -34,15 +34,11 @@ const Farmer_Page = () => {
       <Header role="Farmer" />
       <div className="page-layout">
         <Sidebar>
-          <Pending_List></Pending_List>
+          <Pending_List />
         </Sidebar>
         <div className="content-area">
-          <div>
-            <SearchBar />
-          </div>
-          <div>
-            <h2>Table</h2>
-          </div>
+          <SearchBar />
+          <h1>table</h1>
         </div>
       </div>
     </div>

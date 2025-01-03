@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@keeper-wallet/waves-crypto": "^3.0.8",
+    "@rollup/rollup-win32-x64-msvc": "^4.29.1",
     "@waves/ride-js": "^2.2.9",
     "@waves/waves-transactions": "^4.3.11",
     "@waves/waveskeeper-types": "^0.2.7",
     "axios": "^1.7.8",
-    "base58": "^2.0.1",
     "bootstrap-icons": "^1.11.3",
     "bs58": "^6.0.0",
     "crypto-js": "^4.2.0",

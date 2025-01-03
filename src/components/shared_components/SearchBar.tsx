@@ -24,13 +24,7 @@ const SearchBar: React.FC = () => {
           onClick={handleSearch}
           aria-label="Search"
         >
-          <img
-            className="search-line-icon"
-            src={searchLineIcon}
-            alt="Search Icon"
-            width="24"
-            height="24"
-          />
+          Search
         </button>
       </div>
     </div>
