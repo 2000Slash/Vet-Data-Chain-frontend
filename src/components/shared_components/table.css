@@ -1,0 +1,46 @@
+.table {
+    border-collapse: collapse;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    margin: 20px;
+
+  }
+
+.table-container {
+    position: relative;
+    margin-top: 200px;
+}
+  
+.table thead {
+    background-color: #d9d9d9;
+    
+  }
+
+
+.table th {
+    padding: 12px ;
+    color: black;
+    border: 1px solid black;
+  }
+  
+.table td {
+    background-color: white;
+    color:black;
+    text-align: center;
+    padding: 12px;
+    font-family: sans-serif;
+    border: 1px solid black;
+}
+
+.table td.button-cell {
+    background-color: #bad8f0;
+    border: 0px;
+}
+
+.button {
+    background-color: #4a4a4a;
+    border: 1px solid black; 
+}
+
+
+  

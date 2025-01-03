@@ -20,25 +20,13 @@ const Farmer_Page = () => {
     { key: "height", title: "Height" },
   ];
 
-  //   return (
-  //     <div>
-  //       <Header role="Farmer" />
-  //       <InfoBox_Text title="Vet-Data-Chain" content="This is the Farmer page" />
-  //       <Pending_List></Pending_List>
-  //     </div>
-  //   );
-  // };
 
   return (
     <div className="app-container">
       <Header role="Farmer" />
       <div className="page-layout">
-        <Sidebar>
           <Pending_List />
-        </Sidebar>
         <div className="content-area">
-          <SearchBar />
-          <h1>table</h1>
         </div>
       </div>
     </div>
