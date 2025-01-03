@@ -1,7 +1,7 @@
 import InfoBox_Text from "../components/login/infobox";
 import Header from '../components/shared_components/Header';
 import Pending_List from "../components/farmer/PendingList";
-import Table from "../components/shared_components/Table";
+
 
 const Farmer_Page = () => {
   const rowContent = [
@@ -21,9 +21,8 @@ const Farmer_Page = () => {
   return (
     <div>
     <Header role="Farmer"/>
-    <InfoBox_Text title="Vet-Data-Chain" content="This is the Farmer page"/>
+    {/*<InfoBox_Text title="Vet-Data-Chain" content="This is the Farmer page"/>*/}
     <Pending_List></Pending_List>
-    
     </div>
 
   );

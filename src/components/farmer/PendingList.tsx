@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getKeeperWalletPublicKey ,    getMyVenearyPublicKey , getPendingAaDList, getAaDRecord,  decodeMessage} from '../../utils/utils'  
+import { getKeeperWalletPublicKey ,    getMyVenearyPublicKey , getPendingAaDList, getAaDRecord,  decodeMessage, entryStringToJson} from '../../utils/utils'  
 import useStore from '../../store';
 import InfoBox_Text from '../login/infobox';
+import Table from '../shared_components/Table';
 
 interface InfoBoxData {
   title: string;
@@ -15,6 +16,7 @@ const Pending_List: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [pendingEntries, setPendingEntries] = useState<string[]>([]);
   const [infoBoxData, setInfoBoxData]  = useState<InfoBoxData>({title: '', content: ''});
+  const [jsonData, setJsonData] = useState<any>(null);
 
 
   
@@ -49,6 +51,11 @@ const Pending_List: React.FC = () => {
       const vetenaryPublicKey = await getMyVenearyPublicKey(requestKey)
       let decodedData = await decodeMessage(encodedData, vetenaryPublicKey);
       console.log("Decrypted Data:", decodedData);
+      let jsonString = await entryStringToJson(decodedData);
+      setJsonData(jsonString);
+      console.log("JSON-String: ", jsonString);
+      console.log(jsonString.Signatures);
+      console.log(jsonString.Signatures[0]);
       setInfoBoxData({
         title: title,
         content: decodedData,
@@ -63,20 +70,31 @@ const Pending_List: React.FC = () => {
   };
   
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
+      <div style={{width: '250px', backgroundColor: '#d9d9d9', padding: '15px'}} className='pendingListContainer'>
       <h2>Pending AaD entries</h2>
       {pendingEntries.length === 0 ? (
         <p>No key-value pairs found.</p>
       ) : (
-        <ul>
+        <ul style={{ listStyleType: 'none', padding: 0 }}>
             {pendingEntries.map((entry, index) => (
-                <li key={index}>
-                <strong>Entry {index + 1}:</strong> <button onClick={() => loadPendingAuA(entry)}>{entry}</button>
+                <li key={index} style={{ marginTop: '10px' }}>
+                <button style={{
+                    width: '100%',
+                    padding: '10px',
+                    backgroundColor: '#d9d9d9',
+                    color: 'black',
+                    border: 'none',               
+                    cursor: 'pointer',
+                    fontSize: '20px'
+                  }} onClick={() => loadPendingAuA(entry)}>Entry {index + 1}</button>
                 </li>
             ))}
         </ul>
       )}
-      {infoBoxData && <InfoBox_Text title={infoBoxData.title} content={infoBoxData.content} />}
+      </div>
+      {/*infoBoxData && <InfoBox_Text title={infoBoxData.title} content={infoBoxData.content} />*/}
+      {jsonData && <Table jsonData={jsonData}/>}
     </div>
   );
 };
