@@ -1,6 +1,5 @@
 import InfoBox_Text from "../components/login/infobox";
 import Header from "../components/shared_components/Header";
-import Header from "../components/shared_components/Header";
 import Pending_List from "../components/farmer/PendingList";
 import Table from "../components/shared_components/Table";
 import SearchBar from "../components/shared_components/SearchBar";
