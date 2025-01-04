@@ -1,7 +1,7 @@
 import { nodeInteraction } from "@waves/waves-transactions";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getKeeperWalletURL, getKeeperWalletAddress } from "../../utils/utils";
+import { getKeeperWalletURL, getKeeperWalletAddress, getMyRole } from "../../utils/utils";
 import "../../styles/styles.css";
 import "../../styles/details/loginbox.css";
 
@@ -14,15 +14,9 @@ const Login_box = () => {
   const navigate = useNavigate();
   const rerouting = async () => {
     try {
-      let accountdata = JSON.parse(
-        localStorage.getItem("keeperWalletPublicState")
-      );
-      const key = "role";
-      const adress = accountdata.account.address;
-      const nodeUrl = accountdata.network.server;
-      let role = await nodeInteraction.accountDataByKey(key, adress, nodeUrl);
+      let role = await getMyRole();
       console.log(role);
-      navigate(`/${role.value}`);
+      navigate(`/${role}`);
     } catch (error) {
       console.error("Error in reroute:", error);
     }
