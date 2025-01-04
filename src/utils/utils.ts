@@ -3,8 +3,8 @@ import { nodeInteraction } from '@waves/waves-transactions';
 import axios from 'axios';
 
 
-const vetOfficeAddress = "3N3ZZJgQ6ob6xp2cJJx7bMqsYaiimq6d1YF"
-const vetOfficepubKey = "7JyBiP5kR1ayLVXD9TdFTT79ArC9g8iBpdYXRBnLCmVH"
+const vetOfficeAddress = "3N6smgddDTzYfwrwnbfLWBRukdPSpXTj4Me"
+const vetOfficepubKey = "fDBXyhWgJ5JZssg4uSg2kFddyA441JQrb62fELnrayh"
 
 export async function fetchRegexData(nodeURL: string, walletAddress: string, regex: string) {
 
@@ -21,6 +21,14 @@ export async function fetchRegexData(nodeURL: string, walletAddress: string, reg
   } catch (error) {
       console.error('Error fetching data:', error);
   }
+}
+
+export async function getMyRole(){
+  let key = await getKeeperWalletPublicKey()+ "_role"
+  let address = vetOfficeAddress;
+  let nodeUrl = await getKeeperWalletURL()
+  let role = await nodeInteraction.accountDataByKey(key, address, nodeUrl);
+  return role?.value
 }
 
 export async function getKeeperWalletAddress(): Promise<string> {
@@ -113,7 +121,7 @@ export async function getAaDRecord(aaDKey:string): Promise<string> {
 }
 
 export async function decodeMessage(encryptedMessage: string, senderPublicKey: string): Promise<string>{
-  const context = "vet-data-chain-"; 
+  const context = ""; 
   
   try {
     const message = await KeeperWallet.decryptMessage(
