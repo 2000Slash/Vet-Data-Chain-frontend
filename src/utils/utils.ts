@@ -3,8 +3,8 @@ import { nodeInteraction } from '@waves/waves-transactions';
 import axios from 'axios';
 
 
-const vetOfficeAddress = "3N6smgddDTzYfwrwnbfLWBRukdPSpXTj4Me"
-const vetOfficepubKey = "fDBXyhWgJ5JZssg4uSg2kFddyA441JQrb62fELnrayh"
+const vetOfficeAddress = "3NAvjkBp1pj8NdijCectFXyAVNQ3AjFeDBK"
+const vetOfficepubKey = "DXRAtrqCCryKgeoCy7ECy5fsRCpn7RtpoCGDdUPAm9Nx"
 
 export async function fetchRegexData(nodeURL: string, walletAddress: string, regex: string) {
 
