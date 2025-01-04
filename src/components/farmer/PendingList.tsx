@@ -1,8 +1,15 @@
-import { useState, useEffect } from 'react';
-import { getKeeperWalletPublicKey ,    getMyVenearyPublicKey , getPendingAaDList, getAaDRecord,  decodeMessage, entryStringToJson} from '../../utils/utils'  
-import useStore from '../../store';
-import InfoBox_Text from '../login/infobox';
-import Table from '../shared_components/Table';
+import { useState, useEffect } from "react";
+import {
+  getKeeperWalletPublicKey,
+  getMyVenearyPublicKey,
+  getPendingAaDList,
+  getAaDRecord,
+  decodeMessage,
+  entryStringToJson,
+} from "../../utils/utils";
+import useStore from "../../store";
+import InfoBox_Text from "../login/infobox";
+import Table from "../shared_components/Table";
 
 interface InfoBoxData {
   title: string;
@@ -13,11 +20,11 @@ const Pending_List: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingEntries, setPendingEntries] = useState<string[]>([]);
-  const [infoBoxData, setInfoBoxData]  = useState<InfoBoxData>({title: '', content: ''});
+  const [infoBoxData, setInfoBoxData] = useState<InfoBoxData>({
+    title: "",
+    content: "",
+  });
   const [jsonData, setJsonData] = useState<any>(null);
-
-
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,31 +76,61 @@ const Pending_List: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
-      <div style={{width: '250px', backgroundColor: '#d9d9d9', padding: '15px'}} className='pendingListContainer'>
-      <h2>Pending AaD entries</h2>
-      {pendingEntries.length === 0 ? (
-        <p>No key-value pairs found.</p>
-      ) : (
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
+    <div
+      style={{
+        display: "flex",
+        height: "calc(100vh - 80px)",
+        backgroundColor: "#bad8f0",
+      }}
+    >
+      <div
+        style={{ width: "250px", flexShrink: 0, backgroundColor: "#d9d9d9" }}
+        className="pendingListContainer"
+      >
+        <div
+          style={{
+            padding: "15px",
+            borderBottom: "2px solid #b0b0b0",
+            color: "black",
+          }}
+        >
+          <h3>Pending AaD entries</h3>
+        </div>
+        {pendingEntries.length === 0 ? (
+          <p>No key-value pairs found.</p>
+        ) : (
+          <ul style={{ listStyleType: "none", padding: 0 }}>
             {pendingEntries.map((entry, index) => (
-                <li key={index} style={{ marginTop: '10px' }}>
-                <button style={{
-                    width: '100%',
-                    padding: '10px',
-                    backgroundColor: '#d9d9d9',
-                    color: 'black',
-                    border: 'none',               
-                    cursor: 'pointer',
-                    fontSize: '20px'
-                  }} onClick={() => loadPendingAuA(entry)}>Entry {index + 1}</button>
-                </li>
+              <li key={index} style={{ marginTop: "10px" }}>
+                <button
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    backgroundColor: "#d9d9d9",
+                    color: "black",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "18px",
+                  }}
+                  onClick={() => loadPendingAuA(entry)}
+                >
+                  Entry {index + 1}
+                </button>
+              </li>
             ))}
-        </ul>
-      )}
+          </ul>
+        )}
       </div>
-      {/*infoBoxData && <InfoBox_Text title={infoBoxData.title} content={infoBoxData.content} />*/}
-      {jsonData && <Table jsonData={jsonData}/>}
+      <div
+        style={{
+          flex: 1,
+          backgroundColor: "#bad8f0",
+          overflowX: "auto",
+        }}
+      >
+        {/*infoBoxData && <InfoBox_Text title={infoBoxData.title} content={infoBoxData.content} />*/}
+        {jsonData && <Table jsonData={jsonData} />}
+      </div>
     </div>
   );
 };
