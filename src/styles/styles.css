@@ -17,11 +17,10 @@ body {
   padding: 0;
   font-family: Arial, sans-serif;
   background-color: var(--primary-bg);
-  min-height: 100vh;
+  
 }
 
 .page-layout {
-  margin-top: 80px;
   display: flex;
   width: 100%;
 }
@@ -31,7 +30,6 @@ body {
 }
 
 .app-container {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -50,7 +48,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 80px);
   margin-top: 80px;
   padding: 20px;
 }

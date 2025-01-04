@@ -22,14 +22,11 @@ const Farmer_Page = () => {
 
 
   return (
-    <div className="app-container">
+    <div>
       <Header role="Farmer" />
-      <div className="page-layout">
-          <Pending_List />
-        <div className="content-area">
-        </div>
-      </div>
+      <Pending_List></Pending_List>
     </div>
+    
   );
 };
 

@@ -1,14 +1,31 @@
-import React from "react";
-import "./table.css";
+import React, {useState} from "react";
+import "../../styles/details/Table.css";
+import DetailInformationModal from "./DetailInformationModal";
 
 interface TableProps {
   jsonData: {
     AaDRecords: string[];
+    ContactDataFarmer: string[];
+    ContactDataVeterinary: string[];
+    DateOfIssue: string;
   };
 }
 
 const Table: React.FC<TableProps> = ({ jsonData }) => {
-  console.log("Angekommenes JSON-Objekt:", jsonData.AaDRecords);
+  //console.log("Angekommenes JSON-Objekt in der Table:", jsonData);
+  //console.log("Angekommenes JSON-Objekt in der Table:", jsonData.AaDRecords);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    console.log("Modal open");
+    setIsModalOpen(true);
+  }
+
+  const closeModal = () => {
+    console.log("Modal closed");
+    setIsModalOpen(false);
+  }
 
   return (
     <div className="table-container">
@@ -16,21 +33,19 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
         <thead>
           <tr>
             <th scope="col">
-              Anzahl, Art, Identität bzw. Nutzungsart, <br />
-              ggf. geschätztes Gewicht der Tiere
+              Animal ID, Species, Weight
             </th>
             <th scope="col">
-              Diagnose, <br /> bei Antibiotika zusätzlich <br /> das
-              Untersuchungsdatum
+              Diagnosis, Diagnosis date
             </th>
-            <th scope="col">Arzneimittelbezeichnung</th>
-            <th scope="col">Chargenbezeichnung</th>
-            <th scope="col">Anwendungs-/Abgabemenge</th>
-            <th scope="col">Dosierung pro Tier und Tag</th>
-            <th scope="col">Art der Anwendung</th>
-            <th scope="col">Dauer und Zeitpunkt der Anwendung</th>
-            <th scope="col">Wartezeit, auch wenn diese gleich 0 ist</th>
-            <th scope="col">Behandlungstage, ggf. Wirktage</th>
+            <th scope="col">Medication name, Active ingredient, Pharmaceutical form </th>
+            <th scope="col">Batch name</th>
+            <th scope="col">Application amount</th>
+            <th scope="col">Dosage per animal and day</th>
+            <th scope="col">Route of administration</th>
+            <th scope="col">Duration and timing of administration</th>
+            <th scope="col">Withdrawal Period</th>
+            <th scope="col">Treatment days, Effective days</th>
           </tr>
         </thead>
         <tbody>
@@ -59,13 +74,17 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
                   {fields[17]}, {fields[18]}
                 </td>
                 <td className="button-cell">
-                  <button className="button">Details</button>
+                  <button className="button" onClick={() => openModal()}>Details</button>
                 </td>
               </tr>
             );
           })}
         </tbody>
       </table>
+
+      {isModalOpen && (
+        <DetailInformationModal isModalOpen={isModalOpen} onClose={closeModal} jsonData={jsonData}/>
+      )}
     </div>
   );
 };
