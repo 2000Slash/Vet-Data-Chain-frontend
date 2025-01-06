@@ -5,15 +5,10 @@ import DetailInformationModal from "./DetailInformationModal";
 interface TableProps {
   jsonData: {
     AaDRecords: string[];
-    ContactDataFarmer: string[];
-    ContactDataVeterinary: string[];
-    DateOfIssue: string;
   };
 }
 
 const Table: React.FC<TableProps> = ({ jsonData }) => {
-  //console.log("Angekommenes JSON-Objekt in der Table:", jsonData);
-  //console.log("Angekommenes JSON-Objekt in der Table:", jsonData.AaDRecords);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -49,10 +44,11 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
           </tr>
         </thead>
         <tbody>
-          {jsonData.AaDRecords.map((record, index) => {
+        {jsonData.map((entry, entryIndex) => (
+            entry.AaDRecords.map((record, recordIndex) => {
             const fields = record.split(",");
             return (
-              <tr key={index}>
+              <tr key={recordIndex}>
                 <td>
                   {fields[0]}, {fields[1]}, {fields[2]}kg
                 </td>
@@ -78,7 +74,8 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
                 </td>
               </tr>
             );
-          })}
+          })
+        ))}
         </tbody>
       </table>
 
