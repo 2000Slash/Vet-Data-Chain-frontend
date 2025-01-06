@@ -49,7 +49,7 @@ const Pending_List: React.FC = () => {
       const vetenaryPublicKey = await getMyVenearyPublicKey(requestKey);
       let decodedData = await decodeMessage(encodedData, vetenaryPublicKey);
       console.log("Decrypted Data:", decodedData);
-      let jsonString = await entryStringToJson(decodedData);
+      let jsonString = [await entryStringToJson(decodedData)];
       setJsonData(jsonString);
       console.log("JSON-String: ", jsonString);
       console.log(jsonString.Signatures);
