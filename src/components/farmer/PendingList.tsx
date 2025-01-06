@@ -69,9 +69,8 @@ const Pending_List: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
-      <div style={{width: '250px', backgroundColor: '#d9d9d9', padding: '15px'}} className='pendingListContainer'>
-      <h2>Pending AaD entries</h2>
+    <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{minWidth: '200px', backgroundColor: '#d9d9d9', padding: '15px', height: '100vh'}} className='pendingListContainer'>
       {pendingEntries.length === 0 ? (
         <p>No key-value pairs found.</p>
       ) : (
