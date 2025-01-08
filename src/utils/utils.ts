@@ -24,11 +24,15 @@ export async function fetchRegexData(nodeURL: string, walletAddress: string, reg
 }
 
 export async function getMyRole(){
+  if(await getKeeperWalletAddress() != vetOfficeAddress){
   let key = await getKeeperWalletPublicKey()+ "_role"
   let address = vetOfficeAddress;
   let nodeUrl = await getKeeperWalletURL()
   let role = await nodeInteraction.accountDataByKey(key, address, nodeUrl);
-  return role?.value
+  return role?.value}
+  else if(await getKeeperWalletAddress() == vetOfficeAddress){
+    return "vetenary_office"
+  }
 }
 
 export async function getKeeperWalletAddress(): Promise<string> {
@@ -143,6 +147,34 @@ export async function getMyVenearyPublicKey(aaDEntryKey: String) {
   let vetenaryEntryArray = fetchedData?.data[0].key.split("_");
   return vetenaryEntryArray[1]
 }
+
+
+export async function loadAllVetOfficeData() {
+  let fetchedData = null
+    try {
+      const walletURL = await getKeeperWalletURL();
+      const walletAddress = await getKeeperWalletAddress();
+       fetchedData =  await fetchRegexData(walletURL, walletAddress, `.*_verified$`);  
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  
+    const erg = await Promise.all(
+      fetchedData.data.map(async (verifiedEntry: { value: any; key: string }) => {
+        try {
+          const message = verifiedEntry.value;
+          const senderPublicKey = verifiedEntry.key.split("_")[0];
+          const zwischenergebniss = await entryStringToJson(
+            await decodeMessage(message, senderPublicKey)
+          );
+          return zwischenergebniss;
+        } catch (error) {
+          console.error("Error processing entry:", error);
+          return null;
+        }
+      }))
+   return erg;
+};
 
 export async function entryStringToJson(incomingEntry: string) {
   const segments = incomingEntry.split(';');
