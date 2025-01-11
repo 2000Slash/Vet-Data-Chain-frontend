@@ -46,7 +46,7 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
         <tbody>
         {jsonData.map((entry, entryIndex) => (
             entry.AaDRecords.map((record, recordIndex) => {
-            const fields = record.split(",");
+            const fields = record;
             return (
               <tr key={recordIndex}>
                 <td>

@@ -1,5 +1,6 @@
 import { address} from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
+import { initDatabase, getConnection } from './database';
 import axios from 'axios';
 
 
@@ -197,7 +198,7 @@ export async function entryStringToJson(incomingEntry: string) {
       dateOfIssue = currentSegment;
       break;
     } else {
-      aadRecords.push(currentSegment);
+      aadRecords.push(currentSegment.split(','));
     }
   }
 
@@ -211,3 +212,169 @@ export async function entryStringToJson(incomingEntry: string) {
 }
 
 
+export async function insertData(dataArray: any[]){
+  try {
+    const conn = getConnection();
+    for (const data of dataArray) {
+      let signatures = data.Signatures
+      let response = await conn.query(`
+        INSERT INTO signatures (signatureVetenary, signatureFarmer)
+        VALUES ('${signatures[0]}', '${signatures[1]}')
+        RETURNING recordId;
+      `);
+      let signatureKey = response.batches[0].getChild("recordId").get(0);
+
+      let dateOfIssue = data.DateOfIssue;
+      response = await conn.query(`
+        INSERT INTO dateOfIssue (dateOfIssue)
+        VALUES ('${dateOfIssue[0]}')
+        RETURNING recordId;
+      `);
+      let dateOfIssueKey = response.batches[0].getChild("recordId").get(0);
+
+      let contactDataVeterinary = data.ContactDataVeterinary;
+      response = await conn.query(`
+        INSERT INTO contactDataVetenary (
+          vetTitle,
+          vetFirstName,
+          vetLastName,
+          vetStreet,
+          vetHuseNumber,
+          vetPostalCode,
+          vetCity
+        )
+        VALUES (
+          '${contactDataVeterinary[0]}',
+          '${contactDataVeterinary[1]}',
+          '${contactDataVeterinary[2]}',
+          '${contactDataVeterinary[3]}',
+          '${contactDataVeterinary[4]}',
+          '${contactDataVeterinary[5]}',
+          '${contactDataVeterinary[6]}'
+        )
+        RETURNING recordId;
+      `);
+      const contactDataVeterinaryKey = response.batches[0].getChild("recordId").get(0);
+      
+      let contactDataFarmer = data.ContactDataFarmer;
+      response = await conn.query(`
+        INSERT INTO contactDataFarmer (
+          farmerTitle,
+          farmerFirstName,
+          farmerLastName,
+          farmerStreet,
+          farmerHouseNumber,
+          farmerPostalCode,
+          farmerCity,
+          farmerPhoneNumber
+        )
+        VALUES (
+          '${contactDataVeterinary[0]}',
+          '${contactDataVeterinary[1]}',
+          '${contactDataVeterinary[2]}',
+          '${contactDataVeterinary[3]}',
+          '${contactDataVeterinary[4]}',
+          '${contactDataVeterinary[5]}',
+          '${contactDataVeterinary[6]}',
+          '${contactDataVeterinary[7]}'
+        )
+        RETURNING recordId;
+      `);
+      const contactDataFarmerKey = response.batches[0].getChild("recordId").get(0);
+
+      let aadRecords = data.AaDRecords;
+      //            numberOfAnimals,
+      for (const aadRecord of aadRecords) {
+        response = await conn.query(`
+          INSERT INTO aadRecords (
+            numberOfAnimals,  
+            animalIDS,
+            species,
+            weight,
+            diagnosis,
+            diagnosisDate,
+            medicationName,
+            activeIngredient,
+            pharmaceuticalForm,
+            batchName,
+            applicationAmount,
+            dosagePerAnimalDay,
+            routeOfAdministration,
+            durationAndTiming,
+            withdrawalEdible,
+            withdrawalMilk,
+            withdrawalEggs,
+            withdrawalHoney,
+            treatmentDays,
+            effectiveDays,
+            contactDataFarmerId,
+            contactDataVetenaryId,
+            dateOfIssueId,
+            signatureId
+          )
+          VALUES (
+          '${1}',
+            ${aadRecord[0]},
+            '${aadRecord[1]}',
+            ${aadRecord[2]},
+            '${aadRecord[3]}',
+            '${aadRecord[4]}',
+            '${aadRecord[5]}',
+            '${aadRecord[6]}',
+            '${aadRecord[7]}',
+            '${aadRecord[8]}',
+            ${aadRecord[9]},
+            ${aadRecord[10]},
+            '${aadRecord[11]}',
+            '${aadRecord[12]}',
+            ${aadRecord[13]},
+            ${aadRecord[14]},
+            ${aadRecord[15]},
+            ${aadRecord[16]},
+            ${aadRecord[17]},
+            ${aadRecord[18]},
+            ${contactDataFarmerKey},
+            ${contactDataVeterinaryKey},
+            ${dateOfIssueKey},
+            ${signatureKey}
+          )
+          RETURNING recordId;
+        `)
+      }
+    }
+
+    console.log('All data inserted successfully.');
+    filterDatabase();
+  } catch (error) {
+    console.error('Error inserting data batch:', error);
+  }
+};
+
+export async function filterDatabase(){
+  let conn = getConnection()
+  let response = await conn.query(`
+    SELECT 
+    SUM(aad.weight) AS totalWeight
+FROM 
+    aadRecords AS aad
+JOIN dateOfIssue AS di
+    ON aad.dateOfIssueId = di.recordId
+JOIN signatures AS sig
+    ON aad.signatureId = sig.recordId
+JOIN contactDataVetenary AS cdv
+    ON aad.contactDataVetenaryId = cdv.recordId
+JOIN contactDataFarmer AS cdf
+    ON aad.contactDataFarmerId = cdf.recordId
+WHERE 
+    aad.species = 'Cow';
+ 
+`)
+let rows = response.toArray();
+rows.forEach((row, index) => {
+  console.log(`--- Row #${index + 1} ---`);
+  // Print each key-value pair
+  Object.entries(row).forEach(([columnName, columnValue]) => {
+    console.log(`${columnName}:`, columnValue);
+  });
+});
+}
