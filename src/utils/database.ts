@@ -84,24 +84,6 @@ export async function initDatabase() {
       );
     `),
 
-      // Contact Data Farmer
-      await conn.send(
-        `CREATE SEQUENCE IF NOT EXISTS contactDataFarmer_seq START 1;`
-      ),
-      await conn.send(`
-  CREATE TABLE IF NOT EXISTS contactDataFarmer (
-      recordId INTEGER DEFAULT (nextval('contactDataFarmer_seq')) PRIMARY KEY,
-      farmerTitle TEXT,
-      farmerFirstName TEXT,
-      farmerLastName TEXT,
-      farmerStreet TEXT,
-      farmerHouseNumber TEXT,
-      farmerPostalCode TEXT,
-      farmerCity TEXT,
-      farmerPhoneNumber TEXT
-  );
-`),
-
       // aad records
       await conn.send(`CREATE SEQUENCE IF NOT EXISTS aadRecords_seq START 1;`),
       await conn.send(`

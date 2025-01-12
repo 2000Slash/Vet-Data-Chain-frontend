@@ -1,6 +1,6 @@
 import { address} from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
-import { initDatabase, getConnection } from './database';
+import { getConnection } from './database';
 import axios from 'axios';
 
 
@@ -269,14 +269,14 @@ export async function insertData(dataArray: any[]){
           farmerPhoneNumber
         )
         VALUES (
-          '${contactDataVeterinary[0]}',
-          '${contactDataVeterinary[1]}',
-          '${contactDataVeterinary[2]}',
-          '${contactDataVeterinary[3]}',
-          '${contactDataVeterinary[4]}',
-          '${contactDataVeterinary[5]}',
-          '${contactDataVeterinary[6]}',
-          '${contactDataVeterinary[7]}'
+          '${contactDataFarmer[0]}',
+          '${contactDataFarmer[1]}',
+          '${contactDataFarmer[2]}',
+          '${contactDataFarmer[3]}',
+          '${contactDataFarmer[4]}',
+          '${contactDataFarmer[5]}',
+          '${contactDataFarmer[6]}',
+          '${contactDataFarmer[7]}'
         )
         RETURNING recordId;
       `);
@@ -344,37 +344,68 @@ export async function insertData(dataArray: any[]){
     }
 
     console.log('All data inserted successfully.');
-    filterDatabase();
+    filterDatabase( [
+      ["aadRecords", "species", "Cow"],
+      ["aadRecords", "diagnosis", "Flu"],
+    ]);
   } catch (error) {
     console.error('Error inserting data batch:', error);
   }
 };
 
-export async function filterDatabase(){
+type RequestFilter = [tableName: string, key: string, value: any];
+type RequestFilters = RequestFilter[];
+export async function filterDatabase(requestFilters: RequestFilters ){
+
+  const tableAliases = {
+    aadRecords: "aad",
+    dateOfIssue: "di",
+    signatures: "sig",
+    contactDataVetenary: "cdv",
+    contactDataFarmer: "cdf",
+  };
+
   let conn = getConnection()
-  let response = await conn.query(`
-    SELECT 
-    SUM(aad.weight) AS totalWeight
-FROM 
-    aadRecords AS aad
-JOIN dateOfIssue AS di
-    ON aad.dateOfIssueId = di.recordId
-JOIN signatures AS sig
-    ON aad.signatureId = sig.recordId
-JOIN contactDataVetenary AS cdv
-    ON aad.contactDataVetenaryId = cdv.recordId
-JOIN contactDataFarmer AS cdf
-    ON aad.contactDataFarmerId = cdf.recordId
-WHERE 
-    aad.species = 'Cow';
- 
-`)
-let rows = response.toArray();
-rows.forEach((row, index) => {
-  console.log(`--- Row #${index + 1} ---`);
-  // Print each key-value pair
-  Object.entries(row).forEach(([columnName, columnValue]) => {
-    console.log(`${columnName}:`, columnValue);
-  });
+  let query = `
+  SELECT *
+  FROM 
+      aadRecords AS ${tableAliases.aadRecords}
+  JOIN dateOfIssue AS ${tableAliases.dateOfIssue}
+      ON ${tableAliases.aadRecords}.dateOfIssueId = ${tableAliases.dateOfIssue}.recordId
+  JOIN signatures AS ${tableAliases.signatures}
+      ON ${tableAliases.aadRecords}.signatureId = ${tableAliases.signatures}.recordId
+  JOIN contactDataVetenary AS ${tableAliases.contactDataVetenary}
+      ON ${tableAliases.aadRecords}.contactDataVetenaryId = ${tableAliases.contactDataVetenary}.recordId
+  JOIN contactDataFarmer AS ${tableAliases.contactDataFarmer}
+      ON ${tableAliases.aadRecords}.contactDataFarmerId = ${tableAliases.contactDataFarmer}.recordId
+`
+
+requestFilters.forEach((filter, index) => {
+  const [tableName, key, value] = filter;
+  const alias = tableAliases[tableName];
+  const condition = `${alias}.${key} = '${value}'`;
+  query += index === 0 ? ` WHERE ${condition}` : ` AND ${condition}`;
 });
+
+let response = await conn.query(query)
+
+console.log(duckDBTableDataToArray(response))
+
+
 }
+
+function duckDBTableDataToArray(table)  {
+  const columnNames = table.schema.fields.map((field) => field.name);
+
+  const result = [];
+  for (const batch of table.batches) {
+    for (let i = 0; i < batch.numRows; i++) {
+      const row = {};
+      columnNames.forEach((columnName, colIndex) => {
+        row[columnName] = batch.getChildAt(colIndex).get(i);
+      });
+      result.push(row);
+    }
+  }
+  return result;
+};
