@@ -3,7 +3,8 @@ import InfoBox_Text from "../components/login/infobox";
 import Header from "../components/shared_components/Header";
 import Table from "../components/shared_components/Table";
 import Loading from "../components/shared_components/Loading";
-import { loadAllVetOfficeData } from "../utils/utils";
+import { loadAllVetOfficeData} from "../utils/utils";
+import { filterDatabase } from "../utils/sql_requests";
 
 const Vetenary_office_Page = () => {
   const [jsonData, setJsonData] = useState<any>(null);
@@ -12,13 +13,14 @@ const Vetenary_office_Page = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true)
-        const data = await loadAllVetOfficeData();
+        setLoading(true);
+        await loadAllVetOfficeData();
+        const data = await filterDatabase("aadRecords",[])
         setJsonData(data);
-        setLoading(false)
+        setLoading(false);
       } catch (err) {
         console.error("Error fetching vet office data:", err);
-      } 
+      }
     };
 
     fetchData();
@@ -28,16 +30,15 @@ const Vetenary_office_Page = () => {
     <div>
       <Header role="Veterinary Office" />
       <div>
-        
-          {
-          laoding ? (
-              <Loading/>
-          ): jsonData ? (
-            <><Table jsonData={jsonData}/></>
-          ) : (
-            <p>No data available.</p>
-          )}
-        
+        {laoding ? (
+          <Loading />
+        ) : jsonData ? (
+          <>
+            <Table jsonData={jsonData} />
+          </>
+        ) : (
+          <p>No data available.</p>
+        )}
       </div>
     </div>
   );
