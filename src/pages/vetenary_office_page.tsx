@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import InfoBox_Text from "../components/login/infobox";
 import Header from "../components/shared_components/Header";
 import Table from "../components/shared_components/Table";
 import Loading from "../components/shared_components/Loading";

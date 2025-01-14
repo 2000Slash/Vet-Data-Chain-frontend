@@ -16,12 +16,25 @@ function duckDBTableDataToArray(table)  {
     return result;
   };
 
+  export async function getAllTableNamess() {
+      let conn = getConnection();
+      let query = `
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'main'
+          AND table_type = 'BASE TABLE';
+      `;
+      let data = await conn.query(query);
+      return duckDBTableDataToArray(data);
+  }
+
+
+
+
 
 type RequestFilter = [tableName: string, key: string, value: any];
 type RequestFilters = RequestFilter[];
   export async function filterDatabase(requestedTable:string, requestFilters: RequestFilters ){
-    console.log("requested table is " + requestedTable)
-    console.log()
     const tableAliases = {
       aadRecords: "aad",
       dateOfIssue: "di",
@@ -53,6 +66,5 @@ type RequestFilters = RequestFilter[];
   });
 
   let response = await conn.query(query)
-  console.log(duckDBTableDataToArray(response))
   return(duckDBTableDataToArray(response))
   }
