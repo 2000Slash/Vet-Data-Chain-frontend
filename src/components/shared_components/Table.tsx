@@ -28,7 +28,7 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
         <thead>
           <tr>
             <th scope="col">
-              Animal ID, Species, Weight
+              Number of Animals,Animal IDs, Species, Weight
             </th>
             <th scope="col">
               Diagnosis, Diagnosis date
@@ -50,24 +50,24 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
             return (
               <tr key={recordIndex}>
                 <td>
-                  {fields[0]}, {fields[1]}, {fields[2]}kg
+                  {fields[0]},{fields[1]}, {fields[2]}, {fields[3]}kg
                 </td>
                 <td>
-                  {fields[3]}, {fields[4].split("-").reverse().join(".")}
+                  {fields[4]}, {fields[5].split("-").reverse().join(".")}
                 </td>
                 <td>
-                  {fields[5]}, {fields[6]}, {fields[7]}
+                  {fields[6]}, {fields[7]}, {fields[8]}
                 </td>
-                <td>{fields[8]}</td>
                 <td>{fields[9]}</td>
                 <td>{fields[10]}</td>
                 <td>{fields[11]}</td>
                 <td>{fields[12]}</td>
+                <td>{fields[13]}</td>
                 <td>
-                  {fields[13]}, {fields[14]}, {fields[15]}, {fields[16]}
+                  {fields[14]}, {fields[15]}, {fields[16]}, {fields[17]}
                 </td>
                 <td>
-                  {fields[17]}, {fields[18]}
+                  {fields[18]}, {fields[19]}
                 </td>
                 <td className="button-cell">
                   <button className="button" onClick={() => openModal()}>Details</button>

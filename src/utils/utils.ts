@@ -1,11 +1,11 @@
 import { address} from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
-import { getConnection } from './database';
+import {  getConnection } from './database';
 import axios from 'axios';
 
 
-const vetOfficeAddress = "3NAvjkBp1pj8NdijCectFXyAVNQ3AjFeDBK"
-const vetOfficepubKey = "DXRAtrqCCryKgeoCy7ECy5fsRCpn7RtpoCGDdUPAm9Nx"
+const vetOfficeAddress = "3Mw7pzotYg7Uyu3o51Mbbq9MpucXai2Tcoj"
+const vetOfficepubKey = "3g94uTtw7tSHqFbGt3z2r7geHcetz56wSLRpLW7Mbw7x"
 
 export async function fetchRegexData(nodeURL: string, walletAddress: string, regex: string) {
 
