@@ -3,7 +3,8 @@ import InfoBox_Text from "../components/login/infobox";
 import Header from "../components/shared_components/Header";
 import Table from "../components/shared_components/Table";
 import Loading from "../components/shared_components/Loading";
-import { loadAllVetOfficeData, insertData } from "../utils/utils";
+import { loadAllVetOfficeData} from "../utils/utils";
+import { filterDatabase } from "../utils/sql_requests";
 
 const Vetenary_office_Page = () => {
   const [jsonData, setJsonData] = useState<any>(null);
@@ -13,9 +14,8 @@ const Vetenary_office_Page = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await loadAllVetOfficeData();
-        await insertData(data);
-
+        await loadAllVetOfficeData();
+        const data = await filterDatabase("aadRecords",[])
         setJsonData(data);
         setLoading(false);
       } catch (err) {

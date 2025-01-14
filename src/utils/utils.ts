@@ -174,7 +174,7 @@ export async function loadAllVetOfficeData() {
           return null;
         }
       }))
-   return erg;
+    await insertData(erg)
 };
 
 export async function entryStringToJson(incomingEntry: string) {
@@ -287,7 +287,7 @@ export async function insertData(dataArray: any[]){
       for (const aadRecord of aadRecords) {
         response = await conn.query(`
           INSERT INTO aadRecords (
-            numberOfAnimals,  
+            numberOfAnimals, 
             animalIDS,
             species,
             weight,
@@ -313,26 +313,26 @@ export async function insertData(dataArray: any[]){
             signatureId
           )
           VALUES (
-          '${1}',
-            ${aadRecord[0]},
-            '${aadRecord[1]}',
-            ${aadRecord[2]},
-            '${aadRecord[3]}',
+          '${aadRecord[0]}',
+            ${aadRecord[1]},
+            '${aadRecord[2]}',
+            ${aadRecord[3]},
             '${aadRecord[4]}',
             '${aadRecord[5]}',
             '${aadRecord[6]}',
             '${aadRecord[7]}',
             '${aadRecord[8]}',
-            ${aadRecord[9]},
+            '${aadRecord[9]}',
             ${aadRecord[10]},
-            '${aadRecord[11]}',
+            ${aadRecord[11]},
             '${aadRecord[12]}',
-            ${aadRecord[13]},
+            '${aadRecord[13]}',
             ${aadRecord[14]},
             ${aadRecord[15]},
             ${aadRecord[16]},
             ${aadRecord[17]},
             ${aadRecord[18]},
+            ${aadRecord[19]},
             ${contactDataFarmerKey},
             ${contactDataVeterinaryKey},
             ${dateOfIssueKey},
@@ -344,68 +344,10 @@ export async function insertData(dataArray: any[]){
     }
 
     console.log('All data inserted successfully.');
-    filterDatabase( [
-      ["aadRecords", "species", "Cow"],
-      ["aadRecords", "diagnosis", "Flu"],
-    ]);
   } catch (error) {
     console.error('Error inserting data batch:', error);
   }
 };
 
-type RequestFilter = [tableName: string, key: string, value: any];
-type RequestFilters = RequestFilter[];
-export async function filterDatabase(requestFilters: RequestFilters ){
-
-  const tableAliases = {
-    aadRecords: "aad",
-    dateOfIssue: "di",
-    signatures: "sig",
-    contactDataVetenary: "cdv",
-    contactDataFarmer: "cdf",
-  };
-
-  let conn = getConnection()
-  let query = `
-  SELECT *
-  FROM 
-      aadRecords AS ${tableAliases.aadRecords}
-  JOIN dateOfIssue AS ${tableAliases.dateOfIssue}
-      ON ${tableAliases.aadRecords}.dateOfIssueId = ${tableAliases.dateOfIssue}.recordId
-  JOIN signatures AS ${tableAliases.signatures}
-      ON ${tableAliases.aadRecords}.signatureId = ${tableAliases.signatures}.recordId
-  JOIN contactDataVetenary AS ${tableAliases.contactDataVetenary}
-      ON ${tableAliases.aadRecords}.contactDataVetenaryId = ${tableAliases.contactDataVetenary}.recordId
-  JOIN contactDataFarmer AS ${tableAliases.contactDataFarmer}
-      ON ${tableAliases.aadRecords}.contactDataFarmerId = ${tableAliases.contactDataFarmer}.recordId
-`
-
-requestFilters.forEach((filter, index) => {
-  const [tableName, key, value] = filter;
-  const alias = tableAliases[tableName];
-  const condition = `${alias}.${key} = '${value}'`;
-  query += index === 0 ? ` WHERE ${condition}` : ` AND ${condition}`;
-});
-
-let response = await conn.query(query)
-
-console.log(duckDBTableDataToArray(response))
 
 
-}
-
-function duckDBTableDataToArray(table)  {
-  const columnNames = table.schema.fields.map((field) => field.name);
-
-  const result = [];
-  for (const batch of table.batches) {
-    for (let i = 0; i < batch.numRows; i++) {
-      const row = {};
-      columnNames.forEach((columnName, colIndex) => {
-        row[columnName] = batch.getChildAt(colIndex).get(i);
-      });
-      result.push(row);
-    }
-  }
-  return result;
-};

@@ -2,25 +2,54 @@ import React, {useState} from "react";
 import "../../styles/details/Table.css";
 import DetailInformationModal from "./DetailInformationModal";
 
-interface TableProps {
-  jsonData: {
-    AaDRecords: string[];
-  };
+interface AaDRecord {
+  signatureId: number;
+  numberOfAnimals: number;
+  animalIDS: string;
+  species: string;
+  weight: number;
+  diagnosis: string;
+  diagnosisDate: string;
+  medicationName: string;
+  activeIngredient: string;
+  pharmaceuticalForm: string;
+  batchName: string;
+  applicationAmount: string;
+  dosagePerAnimalDay: string;
+  routeOfAdministration: string;
+  durationAndTiming: string;
+  withdrawalEdible: string;
+  withdrawalMilk: string;
+  withdrawalEggs: string;
+  withdrawalHoney: string;
+  treatmentDays: string;
+  effectiveDays: string;
+  contactDataVetenaryId: number;
+  contactDataFarmerId: number;
+  dateOfIssueId: number;
 }
 
+interface TableProps {
+  jsonData: {
+    AaDRecords: AaDRecord[];
+  };
+}
 const Table: React.FC<TableProps> = ({ jsonData }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<AaDRecord | null>(null);
 
-  const openModal = () => {
+  const openModal = (record: AaDRecord) => {
     console.log("Modal open");
+    setSelectedRecord(record);
     setIsModalOpen(true);
-  }
+  };
 
   const closeModal = () => {
     console.log("Modal closed");
+    setSelectedRecord(null);
     setIsModalOpen(false);
-  }
+  };
 
   return (
     <div className="table-container">
@@ -44,46 +73,51 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
           </tr>
         </thead>
         <tbody>
-        {jsonData.map((entry, entryIndex) => (
-            entry.AaDRecords.map((record, recordIndex) => {
-            const fields = record;
-            return (
-              <tr key={recordIndex}>
-                <td>
-                  {fields[0]},{fields[1]}, {fields[2]}, {fields[3]}kg
-                </td>
-                <td>
-                  {fields[4]}, {fields[5].split("-").reverse().join(".")}
-                </td>
-                <td>
-                  {fields[6]}, {fields[7]}, {fields[8]}
-                </td>
-                <td>{fields[9]}</td>
-                <td>{fields[10]}</td>
-                <td>{fields[11]}</td>
-                <td>{fields[12]}</td>
-                <td>{fields[13]}</td>
-                <td>
-                  {fields[14]}, {fields[15]}, {fields[16]}, {fields[17]}
-                </td>
-                <td>
-                  {fields[18]}, {fields[19]}
-                </td>
-                <td className="button-cell">
-                  <button className="button" onClick={() => openModal()}>Details</button>
-                </td>
-              </tr>
-            );
-          })
-        ))}
-        </tbody>
+        {jsonData.map((record: any, recordIndex: number) => (
+          <tr key={recordIndex}>
+            <td>
+              {record.numberOfAnimals}, {record.animalIDS}, {record.species}, {record.weight}kg
+            </td>
+            <td>
+              {record.diagnosis}, {record.diagnosisDate.split("-").reverse().join(".")}
+            </td>
+            <td>
+              {record.medicationName}, {record.activeIngredient}, {record.pharmaceuticalForm}
+            </td>
+            <td>{record.batchName}</td>
+            <td>{record.applicationAmount}</td>
+            <td>{record.dosagePerAnimalDay}</td>
+            <td>{record.routeOfAdministration}</td>
+            <td>{record.durationAndTiming}</td>
+            <td>
+              {record.withdrawalEdible}, {record.withdrawalMilk}, {record.withdrawalEggs}, {record.withdrawalHoney}
+            </td>
+            <td>
+              {record.treatmentDays}, {record.effectiveDays}
+            </td>
+            <td className="button-cell">
+              <button className="button" onClick={() => openModal(record)}>Details</button>
+            </td>
+          </tr>
+      ))}
+</tbody>
       </table>
 
-      {isModalOpen && (
-        <DetailInformationModal isModalOpen={isModalOpen} onClose={closeModal} jsonData={jsonData}/>
+      {isModalOpen && selectedRecord && (
+        <DetailInformationModal
+          isModalOpen={isModalOpen}
+          onClose={closeModal}
+          signatureId={selectedRecord.signatureId}
+          contactDataVetenaryId={selectedRecord.contactDataVetenaryId}
+          contactDataFarmerId={selectedRecord.contactDataFarmerId}
+          dateOfIssueId={selectedRecord.dateOfIssueId}        />
       )}
     </div>
   );
 };
 
 export default Table;
+
+
+
+
