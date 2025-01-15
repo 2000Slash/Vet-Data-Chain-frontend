@@ -1,7 +1,7 @@
 import { address} from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
 import { getConnection } from './database';
-import {getAllTableNamess, getAllRowNames} from './sql_requests'
+import {getAllTableNamess} from './sql_requests'
 import axios from 'axios';
 
 
