@@ -1,6 +1,6 @@
 import {getConnection} from "./database"
 
-function duckDBTableDataToArray(table)  {
+function duckDBTableDataToArray(table: { schema: { fields: any[]; }; batches: any; })  {
     const columnNames = table.schema.fields.map((field) => field.name);
   
     const result = [];
@@ -19,17 +19,22 @@ function duckDBTableDataToArray(table)  {
   export async function getAllTableNamess() {
       let conn = getConnection();
       let query = `
-        SELECT table_name
-        FROM information_schema.tables
-        WHERE table_schema = 'main'
-          AND table_type = 'BASE TABLE';
+        PRAGMA show_tables;
       `;
       let data = await conn.query(query);
       return duckDBTableDataToArray(data);
   }
 
 
-
+  export async function getAllFields(tablename: string) {
+    let conn = getConnection();
+    let query = `
+        PRAGMA table_info('${tablename}');
+    `;
+    let data = await conn.query(query);
+    return duckDBTableDataToArray(data);
+ 
+}
 
 
 type RequestFilter = [tableName: string, key: string, value: any];
