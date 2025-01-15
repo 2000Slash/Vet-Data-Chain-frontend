@@ -4,6 +4,7 @@ import Table from "../components/shared_components/Table";
 import Loading from "../components/shared_components/Loading";
 import { loadAllVetOfficeData} from "../utils/utils";
 import { filterDatabase } from "../utils/sql_requests";
+import Filter from "../components/shared_components/Filter";
 
 const Vetenary_office_Page = () => {
   const [jsonData, setJsonData] = useState<any>(null);
@@ -28,6 +29,7 @@ const Vetenary_office_Page = () => {
   return (
     <div>
       <Header role="Veterinary Office" />
+      <Filter/>
       <div>
         {laoding ? (
           <Loading />

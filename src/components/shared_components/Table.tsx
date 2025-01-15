@@ -41,6 +41,7 @@ const Table: React.FC<TableProps> = ({ jsonData }) => {
 
   const openModal = (record: AaDRecord) => {
     console.log("Modal open");
+    console.log(jsonData);
     setSelectedRecord(record);
     setIsModalOpen(true);
   };
