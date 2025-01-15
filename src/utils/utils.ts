@@ -215,7 +215,9 @@ export async function entryStringToJson(incomingEntry: string) {
 
 export async function insertData(dataArray: any[]){
   try {
-    
+    const test = await getAllTableNamess();
+    const test1 = await getAllFields(test[0].name)
+
     const conn = getConnection();
     for (const data of dataArray) {
       let signatures = data.Signatures
