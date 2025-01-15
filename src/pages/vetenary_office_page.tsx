@@ -12,7 +12,7 @@ const Vetenary_office_Page = () => {
 
   const handleFilterSubmit = (selectedTable: string, selectedAttribute: string, inputValue: string) => {
     
-    filterDatabase(selectedTable, [[selectedTable, selectedAttribute, inputValue]])
+    filterDatabase("aadRecords", [[selectedTable, selectedAttribute, inputValue]])
       .then((data) => {
         setJsonData(data); 
         console.log("Filtered Data", jsonData);
