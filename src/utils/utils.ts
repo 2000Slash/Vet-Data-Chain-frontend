@@ -1,7 +1,7 @@
 import { address} from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
 import { getConnection } from './database';
-import {getAllTableNamess} from './sql_requests'
+import {getAllTableNamess, getAllFields} from './sql_requests'
 import axios from 'axios';
 
 
@@ -215,7 +215,7 @@ export async function entryStringToJson(incomingEntry: string) {
 
 export async function insertData(dataArray: any[]){
   try {
-    console.log(JSON.stringify(getAllRowNames("contactDataVetenary")))
+    
     const conn = getConnection();
     for (const data of dataArray) {
       let signatures = data.Signatures
