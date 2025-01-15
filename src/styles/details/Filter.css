@@ -17,8 +17,27 @@
 .menu-button {
     background-color: #4a4a4a;
     color: white;
+    height: 40px;
 }
 
 .menu-item {
     margin: 5px;
+}
+
+.input-field {
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    padding-left: 5px;
+}
+
+.input-field-container {
+    margin: 50px;
+}
+
+.input-button {
+    background-color: #4a4a4a;
+    color: white;
+    height: 40px;
+    margin-left: 10px;
 }

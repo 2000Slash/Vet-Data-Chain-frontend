@@ -10,6 +10,20 @@ const Vetenary_office_Page = () => {
   const [jsonData, setJsonData] = useState<any>(null);
   const [laoding, setLoading] = useState<boolean>(false);
 
+  const handleFilterSubmit = (selectedTable: string, selectedAttribute: string, inputValue: string) => {
+    
+    filterDatabase(selectedTable, [[selectedTable, selectedAttribute, inputValue]])
+      .then((data) => {
+        setJsonData(data); 
+        console.log("Filtered Data", jsonData);
+      })
+      .catch((error) => {
+        console.error("Fehler beim Abrufen der gefilterten Daten:", error);
+      });
+    
+    
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,7 +43,7 @@ const Vetenary_office_Page = () => {
   return (
     <div>
       <Header role="Veterinary Office" />
-      <Filter/>
+      <Filter onFilterSubmit={handleFilterSubmit}/>
       <div>
         {laoding ? (
           <Loading />

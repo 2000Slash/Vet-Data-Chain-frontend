@@ -51,9 +51,6 @@ const Pending_List: React.FC = () => {
       console.log("Decrypted Data:", decodedData);
       let jsonString = [await entryStringToJson(decodedData)];
       setJsonData(jsonString);
-      console.log("JSON-String: ", jsonString);
-      console.log(jsonString.Signatures);
-      console.log(jsonString.Signatures[0]);
       setInfoBoxData({
         title: title,
         content: decodedData,
