@@ -1,4 +1,12 @@
 import {getConnection} from "./database"
+const tableAliases = {
+  aadRecords: "aad",
+  dateOfIssue: "di",
+  signatures: "sig",
+  contactDataVetenary: "cdv",
+  contactDataFarmer: "cdf",
+};
+
 
 function duckDBTableDataToArray(table: { schema: { fields: any[]; }; batches: any; })  {
     const columnNames = table.schema.fields.map((field) => field.name);
@@ -69,7 +77,41 @@ type RequestFilters = RequestFilter[];
     const condition = `${alias}.${key} = '${value}'`;
     query += index === 0 ? ` WHERE ${condition}` : ` AND ${condition}`;
   });
-
   let response = await conn.query(query)
   return(duckDBTableDataToArray(response))
   }
+
+  
+
+  export async function getAntibioticSummary(requestFilters) {
+    let conn = getConnection();
+    let query = `
+    SELECT 
+        ${tableAliases.aadRecords}.species,
+        SUM(${tableAliases.aadRecords}.applicationAmount * ${tableAliases.aadRecords}.numberOfAnimals) AS totalAntibiotics,
+        AVG(${tableAliases.aadRecords}.applicationAmount) AS avgAntibioticsPerAnimalPerSpecies
+    FROM 
+        aadRecords AS ${tableAliases.aadRecords}
+    JOIN dateOfIssue AS ${tableAliases.dateOfIssue}
+        ON ${tableAliases.aadRecords}.dateOfIssueId = ${tableAliases.dateOfIssue}.recordId
+    JOIN signatures AS ${tableAliases.signatures}
+        ON ${tableAliases.aadRecords}.signatureId = ${tableAliases.signatures}.recordId
+    JOIN contactDataVetenary AS ${tableAliases.contactDataVetenary}
+        ON ${tableAliases.aadRecords}.contactDataVetenaryId = ${tableAliases.contactDataVetenary}.recordId
+    JOIN contactDataFarmer AS ${tableAliases.contactDataFarmer}
+        ON ${tableAliases.aadRecords}.contactDataFarmerId = ${tableAliases.contactDataFarmer}.recordId
+    `;
+
+    requestFilters.forEach((filter, index) => {
+        const [tableName, key, value] = filter;
+        const alias = tableAliases[tableName];
+        const condition = `${alias}.${key} = '${value}'`;
+        query += index === 0 ? ` WHERE ${condition}` : ` AND ${condition}`;
+    });
+
+    query += ` AND ${tableAliases.aadRecords}.DiagnosisDate != ''
+               GROUP BY ${tableAliases.aadRecords}.species`;
+
+    let response = await conn.query(query);
+    return duckDBTableDataToArray(response);
+}

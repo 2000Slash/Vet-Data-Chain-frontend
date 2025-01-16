@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { filterDatabase } from "../../utils/sql_requests";
+import { filterDatabase } from "../../utils/sqlRequests";
 import "../../styles/details/DetailInformationModal.css";
 
 interface ModalProps {

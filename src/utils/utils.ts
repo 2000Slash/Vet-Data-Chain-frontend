@@ -1,7 +1,7 @@
 import { address} from '@waves/ts-lib-crypto';
 import { nodeInteraction } from '@waves/waves-transactions';
 import { getConnection } from './database';
-import {getAllTableNamess, getAllFields} from './sql_requests'
+import {getAllTableNamess, getAllFields} from './sqlRequests'
 import axios from 'axios';
 
 
@@ -26,15 +26,11 @@ export async function fetchRegexData(nodeURL: string, walletAddress: string, reg
 }
 
 export async function getMyRole(){
-  if(await getKeeperWalletAddress() != vetOfficeAddress){
   let key = await getKeeperWalletPublicKey()+ "_role"
   let address = vetOfficeAddress;
   let nodeUrl = await getKeeperWalletURL()
   let role = await nodeInteraction.accountDataByKey(key, address, nodeUrl);
-  return role?.value}
-  else if(await getKeeperWalletAddress() == vetOfficeAddress){
-    return "vetenary_office"
-  }
+  return role?.value
 }
 
 export async function getKeeperWalletAddress(): Promise<string> {

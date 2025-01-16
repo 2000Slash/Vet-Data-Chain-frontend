@@ -1,6 +1,6 @@
 import * as React from "react";
 import "../../styles/details/Filter.css";
-import { getAllTableNamess, getAllFields } from "../../utils/sql_requests";
+import { getAllTableNamess, getAllFields } from "../../utils/sqlRequests";
 
 const Filter = ({ onFilterSubmit }: { onFilterSubmit: (selectedTable: string, selectedAttribute: string, inputValue: string) => void }) => {
   const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
