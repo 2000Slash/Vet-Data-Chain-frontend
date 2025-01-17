@@ -13,13 +13,38 @@ const Login_box = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const rerouting = async () => {
-    try {
-      let role = await getMyRole();
-      console.log(role);
-      navigate(`/${role}`);
-    } catch (error) {
-      console.error("Error in reroute:", error);
+ 
+    if (typeof KeeperWallet !== 'undefined') {
+      let locked = (await KeeperWallet.publicState()).locked
+      if (locked) {
+        KeeperWallet.auth({ data: 'Please unlock your wallet' })
+          .then(async (authData) => {
+            console.log('Wallet unlocked successfully:', authData);
+            try {
+              let role = await getMyRole();
+              console.log(role);
+              navigate(`/${role}`);
+            } catch (error) {
+              console.error('Error in reroute:', error);
+            }
+          })
+          .catch((error) => {
+            console.error('Failed to unlock the wallet:', error);
+          });
+      } else {
+        try {
+          let role = await getMyRole();
+          console.log(role);
+          navigate(`/${role}`);
+        } catch (error) {
+          console.error('Error in reroute:', error);
+        }
+      }
+    } else {
+      console.error('Keeper Wallet is not installed');
     }
+  
+    
   };
 
   const handleKeeperWalletLogin = () => {
