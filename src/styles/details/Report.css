@@ -1,0 +1,12 @@
+.reportContainer {
+    background-color: white; 
+  }
+  
+  .reportContainer button {
+    background-color: green; 
+    color: white;           
+  }
+  
+  p{
+    color: black !important;
+  }

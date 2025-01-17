@@ -19,10 +19,8 @@ const Login_box = () => {
       if (locked) {
         KeeperWallet.auth({ data: 'Please unlock your wallet' })
           .then(async (authData) => {
-            console.log('Wallet unlocked successfully:', authData);
             try {
               let role = await getMyRole();
-              console.log(role);
               navigate(`/${role}`);
             } catch (error) {
               console.error('Error in reroute:', error);
@@ -34,7 +32,6 @@ const Login_box = () => {
       } else {
         try {
           let role = await getMyRole();
-          console.log(role);
           navigate(`/${role}`);
         } catch (error) {
           console.error('Error in reroute:', error);
@@ -51,7 +48,6 @@ const Login_box = () => {
     KeeperWallet.publicState()
       .then((state) => {
         setLoading(true);
-        console.log(state);
         localStorage.setItem("keeperWalletPublicState", JSON.stringify(state));
         rerouting();
         setLoading(false);

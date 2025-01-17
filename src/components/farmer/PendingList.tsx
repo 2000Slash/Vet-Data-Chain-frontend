@@ -48,7 +48,6 @@ const Pending_List: React.FC = () => {
       let encodedData = String(await getAaDRecord(requestKey));
       const vetenaryPublicKey = await getMyVenearyPublicKey(requestKey);
       let decodedData = await decodeMessage(encodedData, vetenaryPublicKey);
-      console.log("Decrypted Data:", decodedData);
       let jsonString = [await entryStringToJson(decodedData)];
       setJsonData(jsonString);
       setInfoBoxData({
