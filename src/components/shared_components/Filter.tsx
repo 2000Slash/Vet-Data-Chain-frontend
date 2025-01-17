@@ -5,6 +5,7 @@ import { getAllTableNamess, getAllFields } from "../../utils/sqlRequests";
 const Filter = ({ onFilterSubmit }: { onFilterSubmit: (selectedTable: string, selectedAttribute: string, inputValue: string) => void }) => {
   const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
   const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
+  const [openInputFilter, setOpenInputFiler] = React.useState(false);
   const [selectedTable, setSelectedTable] = React.useState("Table ID");
   const [selectedAttribute, setSelectedAttribute] = React.useState("");
   const [tableNames, setTableNames] = React.useState<{ name: string }[]>([]);
@@ -26,6 +27,7 @@ const Filter = ({ onFilterSubmit }: { onFilterSubmit: (selectedTable: string, se
 
   const handleOpenSecondFilter = async () => {
     setOpenSecondFilter(!openSecondFilter);
+    setOpenInputFiler(!openInputFilter);
 
     getAllFields(selectedTable)
       .then((data) => {
@@ -61,6 +63,15 @@ const Filter = ({ onFilterSubmit }: { onFilterSubmit: (selectedTable: string, se
     } else {
       alert("Please fill in all fields.");
     }
+  };
+
+  const handleResetClick = () => {
+    onFilterSubmit("","","");
+    setSecondMenuVisible(false);
+    setOpenInputFiler(false);
+    setSelectedTable("Table ID");
+    setSelectedAttribute("");
+    setInputValue("");
   };
 
   return (
@@ -107,7 +118,7 @@ const Filter = ({ onFilterSubmit }: { onFilterSubmit: (selectedTable: string, se
         </div>
       )}
 
-      {selectedTable !== "Table ID" && selectedAttribute && (
+      {selectedTable !== "Table ID" && selectedAttribute && openInputFilter && (
         <div className="input-field-container">
           <input
             id="inputField"
@@ -118,6 +129,7 @@ const Filter = ({ onFilterSubmit }: { onFilterSubmit: (selectedTable: string, se
             placeholder="Type your filter text"
           />
           <button className="input-button" onClick={handleFilterClick}>Filter</button>
+          <button className="input-button" onClick={handleResetClick}>Reset</button>
         </div>
       )}
     </div>
