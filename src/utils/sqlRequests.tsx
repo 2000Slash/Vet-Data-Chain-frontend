@@ -113,5 +113,12 @@ type RequestFilters = RequestFilter[];
                GROUP BY ${tableAliases.aadRecords}.species`;
 
     let response = await conn.query(query);
-    return duckDBTableDataToArray(response);
+    const outcome = duckDBTableDataToArray(response);
+    let total = { "species": "All Animals", "totalAntibiotics": 0, "avgAntibioticsPerAnimalPerSpecies": undefined}
+    outcome.forEach(finding =>{
+      total.totalAntibiotics += finding.totalAntibiotics
+    })
+    outcome.push(total)
+
+    return outcome;
 }

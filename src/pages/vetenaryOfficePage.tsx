@@ -63,7 +63,13 @@ const Vetenary_office_Page = () => {
         setLoading(true);
         await loadAllVetOfficeData();
         const dataForTable = await filterDatabase("aadRecords", []);
-        const antibioticData = await getAntibioticSummary([]);
+        getAntibioticSummary([])
+      .then((data) => {
+        setReportData(data);
+      })
+      .catch((error) => {
+        console.error("Fehler beim Abrufen der gefilterten Daten:", error);
+      });
         setTableData(dataForTable);
         setLoading(false);
       } catch (err) {
@@ -84,7 +90,7 @@ const Vetenary_office_Page = () => {
         ) : tableData ? (
           <>
             <Table jsonData={tableData} />
-            <Report tabNames={["Antibiotic stats"]} jsonData={[reportData]} />
+            <Report tabNames={["Antibiotic stats","Other Menu 1", "Other Menu2"]} jsonData={[reportData,,]} />
           </>
         ) : (
           <p>No data available.</p>
