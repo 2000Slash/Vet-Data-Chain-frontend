@@ -41,3 +41,12 @@
     height: 40px;
     margin-left: 10px;
 }
+
+.appliedFilters-container {
+    margin-left: 20px;
+    display: flex;
+}
+
+.appliedFilters-list {
+    list-style-type: none;
+}
