@@ -67,17 +67,8 @@ const Filter = ({
   };
 
   const handleFilterClick = () => {
-    if (selectedTable !== "Table ID" && selectedAttribute && inputValue) {
-
-      const newFilter = { table: selectedTable, attribute: selectedAttribute, value: inputValue };
-      setAppliedFilters((prevFilters) => [...prevFilters, newFilter]);
-
-    
-      const formattedFilters = appliedFilters.map(filter => [filter.table, filter.attribute, filter.value]);
-      console.log(formattedFilters);
-
+    if (selectedTable !== "Table ID" && selectedAttribute && inputValue) {    
       onFilterSubmit(selectedTable, selectedAttribute, inputValue);
-
       setSecondMenuVisible(false);
       setOpenInputFiler(false);
       setSelectedTable("Table ID");

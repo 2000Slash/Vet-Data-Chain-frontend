@@ -5,8 +5,8 @@ import {getAllTableNamess, getAllFields} from './sqlRequests'
 import axios from 'axios';
 
 
-const vetOfficeAddress = "3Mw7pzotYg7Uyu3o51Mbbq9MpucXai2Tcoj"
-const vetOfficepubKey = "3g94uTtw7tSHqFbGt3z2r7geHcetz56wSLRpLW7Mbw7x"
+const vetOfficeAddress = "3NCJnnM5fMnQu2zcqcSNQb5K1zp3jTFA5C6"
+const vetOfficepubKey = "5hob7zV54Y57PXP5GtwKMGgQUwYDSqF658SDVktZ3KCQ"
 
 export async function fetchRegexData(nodeURL: string, walletAddress: string, regex: string) {
 

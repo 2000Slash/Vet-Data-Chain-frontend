@@ -7,10 +7,18 @@ import { loadAllVetOfficeData } from "../utils/utils";
 import { filterDatabase, getAntibioticSummary } from "../utils/sqlRequests";
 import Filter from "../components/shared_components/Filter";
 
+
 const Vetenary_office_Page = () => {
   const [tableData, setTableData] = useState<any>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [laoding, setLoading] = useState<boolean>(false);
+
+  type FilterType = {
+    table: string;
+    attribute: string;
+    value: string;
+  };
+  const [filter, setFilter] = useState<FilterType[]>([]);
 
   const handleFilterSubmit = async (
     selectedTable: string,
@@ -18,17 +26,20 @@ const Vetenary_office_Page = () => {
     inputValue: string
   ) => {
     if (selectedTable === "" && selectedAttribute === "" && inputValue === "") {
-      try {
-        const dataForTable = await filterDatabase("aadRecords", []);
-        setTableData(dataForTable);
-        setReportData(null);
-      } catch (error) {
-        console.error("Fehler beim Abrufen der Daten:", error);
-      }
+        const resetFilter: FilterType = [];
+        setFilter(resetFilter);
+        filterDatabase("aadRecords",resetFilter)
+          .then((data) => {
+            setTableData(data);
+          })
+          .catch((error) => {
+            console.error("Fehler beim Abrufen der gefilterten Daten:", error);
+          });
     } else {
-      filterDatabase("aadRecords", [
-        [selectedTable, selectedAttribute, inputValue],
-      ])
+      const additionalFilter: FilterType = [selectedTable, selectedAttribute, inputValue];
+      const updatedFilter = [...filter,additionalFilter];
+      setFilter(updatedFilter);
+      filterDatabase("aadRecords",updatedFilter)
         .then((data) => {
           setTableData(data);
         })
