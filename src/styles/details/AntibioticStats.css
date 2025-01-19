@@ -1,0 +1,19 @@
+th{
+  color: black;
+}
+
+td{
+  color: black;
+}
+
+h2{
+  color: black;
+}
+
+div{
+  color: black;
+}
+
+th, td {
+  border: 1px solid #000000; 
+}
