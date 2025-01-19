@@ -45,7 +45,7 @@ export async function initDatabase() {
       await conn.send(`
   CREATE TABLE IF NOT EXISTS dateOfIssue (
       recordId INTEGER DEFAULT (nextval('dateOfIssue_seq')) PRIMARY KEY,
-      dateOfIssue TEXT NOT NULL,
+      dateOfIssue DATETIME NOT NULL,
   );
 `),
 

@@ -18,7 +18,7 @@ const Report = ({ tabNames, jsonData }) => {
         <div className={"reportContainer"}>
             <div>
                 {tabNames.map((name, index) => (
-                    <button key={index} onClick={() => setActiveTab(index)} style={{ backgroundColor: 'green', color: 'white'}}>{name}</button>
+                    <button key={index} onClick={() => setActiveTab(index)}>{name}</button>
                 ))}
             </div>
             <div>

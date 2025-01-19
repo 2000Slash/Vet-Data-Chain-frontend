@@ -5,8 +5,8 @@ import {getAllTableNamess, getAllFields} from './sqlRequests'
 import axios from 'axios';
 
 
-const vetOfficeAddress = "3Mw7pzotYg7Uyu3o51Mbbq9MpucXai2Tcoj"
-const vetOfficepubKey = "3g94uTtw7tSHqFbGt3z2r7geHcetz56wSLRpLW7Mbw7x"
+const vetOfficeAddress = "3NCJnnM5fMnQu2zcqcSNQb5K1zp3jTFA5C6"
+const vetOfficepubKey = "5hob7zV54Y57PXP5GtwKMGgQUwYDSqF658SDVktZ3KCQ"
 
 export async function fetchRegexData(nodeURL: string, walletAddress: string, regex: string) {
 
@@ -211,9 +211,6 @@ export async function entryStringToJson(incomingEntry: string) {
 
 export async function insertData(dataArray: any[]){
   try {
-    const test = await getAllTableNamess();
-    const test1 = await getAllFields(test[0].name)
-
     const conn = getConnection();
     for (const data of dataArray) {
       let signatures = data.Signatures
@@ -227,7 +224,7 @@ export async function insertData(dataArray: any[]){
       let dateOfIssue = data.DateOfIssue;
       response = await conn.query(`
         INSERT INTO dateOfIssue (dateOfIssue)
-        VALUES ('${dateOfIssue[0]}')
+        VALUES ('${dateOfIssue}')
         RETURNING recordId;
       `);
       let dateOfIssueKey = response.batches[0].getChild("recordId").get(0);
@@ -283,7 +280,6 @@ export async function insertData(dataArray: any[]){
       const contactDataFarmerKey = response.batches[0].getChild("recordId").get(0);
 
       let aadRecords = data.AaDRecords;
-      //            numberOfAnimals,
       for (const aadRecord of aadRecords) {
         response = await conn.query(`
           INSERT INTO aadRecords (

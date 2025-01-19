@@ -94,7 +94,21 @@ const DetailInformationModal: React.FC<ModalProps> = ({
                 </div>
               </div>
               <div className="text-box">
-                <p>Date of Issue: {dateOfIssueData?.[0]?.dateOfIssue || "N/A"}</p>
+              <p>
+                Date of Issue: <br></br>
+                {dateOfIssueData?.[0]?.dateOfIssue 
+                  ? new Date(Number(dateOfIssueData[0].dateOfIssue))
+                      .toLocaleString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                      })
+                  : "N/A"}
+              </p>
               </div>
             </>
           )}
