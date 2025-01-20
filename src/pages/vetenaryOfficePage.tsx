@@ -11,6 +11,9 @@ const Vetenary_office_Page = () => {
   const [tableData, setTableData] = useState<any>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [laoding, setLoading] = useState<boolean>(false);
+  const [tableValue, setTableValue] = useState("Table ID");
+  const [attributeValue, setAttributeValue] = useState("");
+  const [textValue, setTextValue] = useState("");
 
   type FilterType = {
     table: string;
@@ -18,25 +21,29 @@ const Vetenary_office_Page = () => {
     value: string;
   };
   const [filters, setFilters] = useState<FilterType[]>([]);
+  
 
   const handleFilterSubmit = async (
     selectedTable: string,
     selectedAttribute: string,
     inputValue: string
   ) => {
-
     if (selectedTable && selectedAttribute && inputValue) {
-      const newFilter: FilterType = { table: selectedTable, attribute: selectedAttribute, value: inputValue };
-      console.log("Neuer Filter", newFilter);
-      setFilters((prevFilters) => [...prevFilters, newFilter]); 
-      //console.log("Aktuelle Filter:", filters);
+      const additionalFilter: FilterType = [
+        selectedTable,
+        selectedAttribute,
+        inputValue,
+      ];
+      const updatedFilter = [...filters, additionalFilter];
+      setFilters(updatedFilter);
+      console.log("Neuer Filter", updatedFilter);
     } else {
       alert("Bitte füllen Sie alle Felder aus.");
     }
   };
 
   useEffect(() => {
-    console.log("Aktuelle Filter:", filters); 
+    console.log("Aktuelle Filter:", filters);
   }, [filters]);
 
   const handleApplyFilters = async () => {
@@ -56,8 +63,25 @@ const Vetenary_office_Page = () => {
     }
   };
 
+  const handleResetButton = async () => {
+    setFilters([]);
+    setTableValue("Table ID");
+    setAttributeValue("");
+    setTextValue("");
+    setLoading(true);
 
-    
+    try {
+      const dataForTable = await filterDatabase("aadRecords", []); 
+      const summaryData = await getAntibioticSummary([]); 
+
+      setTableData(dataForTable);
+      setReportData(summaryData);
+    } catch (error) {
+      console.error("Fehler beim Zurücksetzen der Daten:", error);
+    } finally {
+      setLoading(false); 
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,32 +109,36 @@ const Vetenary_office_Page = () => {
   return (
     <div>
       <Header role="Veterinary Office" />
-      {filters.length > 0 ? (
-        filters.map((filter, index) => (
-          <div key={`filter-${index}`}>
-            <Filter
-              onFilterSubmit={handleFilterSubmit}
-              initialSelectedTable={filter.table}
-              initialSelectedAttribute={filter.attribute}
-              initialInputValue={filter.value}
-            />
-          </div>
-        ))
-      ) : (
+      <div>
         <div>
-          
           <Filter
             onFilterSubmit={handleFilterSubmit}
-            initialSelectedTable="Table ID"
-            initialSelectedAttribute=""
-            initialInputValue=""
+            initialSelectedTable= {tableValue}
+            initialSelectedAttribute= {attributeValue}
+            initialInputValue= {textValue}
           />
         </div>
-      )}
-      <div className="appliedFilters-container">
-          <button className="input-button" onClick={handleApplyFilters}>Apply Filter</button>
-          <button className="input-button"> Reset</button>
-        </div>
+
+        {filters.length > 0 &&
+          filters.map((filter, index) => (
+            <div key={index}>
+              <Filter
+                onFilterSubmit={handleFilterSubmit}
+                initialSelectedTable={filter.table}
+                initialSelectedAttribute={filter.attribute}
+                initialInputValue={filter.value}
+              />
+            </div>
+          ))}
+      </div>
+      <div>
+        <button className="input-button" onClick={handleApplyFilters}>
+          Apply Filter
+        </button>
+        <button className="input-button" onClick={handleResetButton}>
+          Reset
+        </button>
+      </div>
       <div>
         {laoding ? (
           <Loading />

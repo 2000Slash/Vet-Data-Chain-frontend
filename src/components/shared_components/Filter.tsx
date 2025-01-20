@@ -19,7 +19,7 @@ const Filter = ({
 }) => {
   const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
   const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
-  const [openInputFilter, setOpenInputFiler] = React.useState(false);
+  const [openInputFilter, setOpenInputFilter] = React.useState(false);
   const [selectedTable, setSelectedTable] = React.useState(initialSelectedTable);
   const [selectedAttribute, setSelectedAttribute] = React.useState(initialSelectedAttribute);
   const [tableNames, setTableNames] = React.useState<{ name: string }[]>([]);
@@ -42,7 +42,7 @@ const Filter = ({
 
   const handleOpenSecondFilter = async () => {
     setOpenSecondFilter(!openSecondFilter);
-    setOpenInputFiler(!openInputFilter);
+    setOpenInputFilter(!openInputFilter);
 
     getAllFields(selectedTable)
       .then((data) => {
@@ -148,10 +148,7 @@ const Filter = ({
              
             </div>
           )}
-      </div>
-      
-        
-      
+      </div>  
     </>
   );
 };
