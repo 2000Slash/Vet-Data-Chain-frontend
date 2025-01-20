@@ -4,23 +4,29 @@ import { getAllTableNamess, getAllFields } from "../../utils/sqlRequests";
 
 const Filter = ({
   onFilterSubmit,
+  initialSelectedTable = "Table ID",
+  initialSelectedAttribute = "",
+  initialInputValue = "",
 }: {
   onFilterSubmit: (
     selectedTable: string,
     selectedAttribute: string,
     inputValue: string
   ) => void;
+  initialSelectedTable?: string;
+  initialSelectedAttribute?: string;
+  initialInputValue?: string;
 }) => {
   const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
   const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
   const [openInputFilter, setOpenInputFiler] = React.useState(false);
-  const [selectedTable, setSelectedTable] = React.useState("Table ID");
-  const [selectedAttribute, setSelectedAttribute] = React.useState("");
+  const [selectedTable, setSelectedTable] = React.useState(initialSelectedTable);
+  const [selectedAttribute, setSelectedAttribute] = React.useState(initialSelectedAttribute);
   const [tableNames, setTableNames] = React.useState<{ name: string }[]>([]);
   const [fieldNames, setFieldNames] = React.useState<{ name: string }[]>([]);
-  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue, setInputValue] = React.useState(initialInputValue);
   const [secondMenuVisible, setSecondMenuVisible] = React.useState(false);
-  const [appliedFilters, setAppliedFilters] = React.useState<{table: string, attribute: string; value: string }[]>([]);
+  //const [appliedFilters, setAppliedFilters] = React.useState<{table: string, attribute: string; value: string }[]>([]);
 
   const handleOpenFirstFilter = async () => {
     setOpenFirstFilter(!openFirstFilter);
@@ -67,27 +73,17 @@ const Filter = ({
   };
 
   const handleFilterClick = () => {
-    if (selectedTable !== "Table ID" && selectedAttribute && inputValue) {    
+    if (selectedTable !== "Table ID" && selectedAttribute && inputValue) { 
+      console.log("Werte:",selectedTable,selectedAttribute,inputValue); 
+      console.log("Zustandswerte:",openFirstFilter, openSecondFilter, openInputFilter, secondMenuVisible);
       onFilterSubmit(selectedTable, selectedAttribute, inputValue);
-      setSecondMenuVisible(false);
-      setOpenInputFiler(false);
-      setSelectedTable("Table ID");
-      setSelectedAttribute("");
-      setInputValue("");
+      
     } else {
       alert("Please fill in all fields.");
     }
   };
 
-  const handleResetClick = () => {
-    onFilterSubmit("", "", "");
-    setSecondMenuVisible(false);
-    setOpenInputFiler(false);
-    setSelectedTable("Table ID");
-    setSelectedAttribute("");
-    setInputValue("");
-    setAppliedFilters([]);
-  };
+  
 
   return (
     <>
@@ -146,27 +142,15 @@ const Filter = ({
                 onChange={handleInputChange}
                 placeholder="Type your filter text"
               />
-              <button className="input-button" onClick={handleFilterClick}>
-                Filter
+              <button className="add-button" onClick={handleFilterClick}>
+                +
               </button>
              
             </div>
           )}
       </div>
       
-        <div className="appliedFilters-container">
-          <h3>Applied Filters</h3>
-          <ul className="appliedFilters-list">
-            {appliedFilters.map((filter, index) => (
-              <li key={index}>
-                Attribute: {filter.attribute}, Value: {filter.value}
-              </li>
-            ))}
-          </ul>
-          <button className="input-button" onClick={handleResetClick}>
-            Reset
-          </button>
-        </div>
+        
       
     </>
   );
