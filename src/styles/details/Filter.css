@@ -56,3 +56,13 @@
     border-radius: 50px;
     margin-left: 10px;
 }
+
+.remove-button {
+    background-color: red;
+    border-radius: 50px;
+    margin-left: 10px;
+}
+
+.menu-button-disabled {
+    opacity: 0.8;
+}

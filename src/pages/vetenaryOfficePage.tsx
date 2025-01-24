@@ -11,9 +11,11 @@ const Vetenary_office_Page = () => {
   const [tableData, setTableData] = useState<any>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [laoding, setLoading] = useState<boolean>(false);
-  const [tableValue, setTableValue] = useState("Table ID");
+  const [tableValue, setTableValue] = useState("Table");
   const [attributeValue, setAttributeValue] = useState("");
   const [textValue, setTextValue] = useState("");
+  const [resetKey, setResetKey] = useState(0);
+  const [buttonStatus, setButtonStatus] = useState<boolean[]>([false]);
 
   type FilterType = {
     table: string;
@@ -21,12 +23,12 @@ const Vetenary_office_Page = () => {
     value: string;
   };
   const [filters, setFilters] = useState<FilterType[]>([]);
-  
 
   const handleFilterSubmit = async (
     selectedTable: string,
     selectedAttribute: string,
-    inputValue: string
+    inputValue: string,
+    filterIndex: number
   ) => {
     if (selectedTable && selectedAttribute && inputValue) {
       const additionalFilter: FilterType = [
@@ -34,17 +36,23 @@ const Vetenary_office_Page = () => {
         selectedAttribute,
         inputValue,
       ];
+      console.log("Index filter added:", filterIndex);
       const updatedFilter = [...filters, additionalFilter];
       setFilters(updatedFilter);
-      console.log("Neuer Filter", updatedFilter);
+      const updatedButtonStatus = [...buttonStatus];
+
+      updatedButtonStatus[filterIndex] = true;
+
+      if (filterIndex + 1 !== buttonStatus.length) {
+        updatedButtonStatus.push(false);
+      }
+      setButtonStatus(updatedButtonStatus);
+      console.log("Neuerrrr Filter", updatedFilter);
+      console.log("Neuer Buttonstatus:", updatedButtonStatus);
     } else {
       alert("Bitte füllen Sie alle Felder aus.");
     }
   };
-
-  useEffect(() => {
-    console.log("Aktuelle Filter:", filters);
-  }, [filters]);
 
   const handleApplyFilters = async () => {
     if (filters.length > 0) {
@@ -63,23 +71,48 @@ const Vetenary_office_Page = () => {
     }
   };
 
+  const handleRemoveFilter = (index: number) => {
+    console.log("Remove filter starts");
+    console.log("Old filter", filters);
+    console.log("Index for remove", index);
+    const updatedFilters = filters.filter((_, i) => i !== index);
+    console.log("New filter", updatedFilters);
+    setFilters(updatedFilters);
+
+    const updatedButtonStatus = [...buttonStatus];
+
+    if (updatedButtonStatus[index] === true) {
+      updatedButtonStatus[index] = false;
+    }
+    setButtonStatus(updatedButtonStatus);
+    console.log("New button status", updatedButtonStatus);
+
+    if (updatedFilters.length === 0) {
+      setTableValue("Table ID");
+      setAttributeValue("");
+      setTextValue("");
+    }
+  };
+
   const handleResetButton = async () => {
     setFilters([]);
     setTableValue("Table ID");
     setAttributeValue("");
     setTextValue("");
+    setResetKey((prevKey) => prevKey + 1);
+    setButtonStatus([]);
     setLoading(true);
 
     try {
-      const dataForTable = await filterDatabase("aadRecords", []); 
-      const summaryData = await getAntibioticSummary([]); 
+      const dataForTable = await filterDatabase("aadRecords", []);
+      const summaryData = await getAntibioticSummary([]);
 
       setTableData(dataForTable);
       setReportData(summaryData);
     } catch (error) {
       console.error("Fehler beim Zurücksetzen der Daten:", error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -112,10 +145,15 @@ const Vetenary_office_Page = () => {
       <div>
         <div>
           <Filter
+            key={resetKey}
             onFilterSubmit={handleFilterSubmit}
-            initialSelectedTable= {tableValue}
-            initialSelectedAttribute= {attributeValue}
-            initialInputValue= {textValue}
+            initialSelectedTable={tableValue}
+            initialSelectedAttribute={attributeValue}
+            initialInputValue={textValue}
+            isAdded={filters.length > 0 && filters[0].table !== "Table ID"}
+            onRemoveFilter={handleRemoveFilter}
+            filterIndex={0}
+            isDisabled={buttonStatus[0]}
           />
         </div>
 
@@ -127,6 +165,10 @@ const Vetenary_office_Page = () => {
                 initialSelectedTable={filter.table}
                 initialSelectedAttribute={filter.attribute}
                 initialInputValue={filter.value}
+                filterIndex={index + 1}
+                onRemoveFilter={handleRemoveFilter}
+                isAdded={buttonStatus[index + 1]}
+                isDisabled={buttonStatus[index + 1]}
               />
             </div>
           ))}
@@ -146,7 +188,7 @@ const Vetenary_office_Page = () => {
           <>
             <Table jsonData={tableData} />
             <Report
-              tabNames={["Antibiotic stats", "Other Menu 1", "Other Menu2"]}
+              tabNames={["Antibiotic stats", "Other Menu 1", "Other Menu 2"]}
               jsonData={[reportData, ,]}
             />
           </>
