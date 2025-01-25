@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getKeeperWalletPublicKey ,    getMyVenearyPublicKey , getPendingAaDList, getAaDRecord,  decodeMessage, entryStringToJson} from '../../utils/utils'  
+import { getKeeperWalletPublicKey ,    getMyVenearyPublicKey , getPendingAaDList, getAaDRecord,  decodeMessage, parseEntryToObject} from '../../utils/utils'  
 import Table from '../shared_components/Table';
 
 interface InfoBoxData {
@@ -47,7 +47,7 @@ const Pending_List: React.FC = () => {
       const vetenaryPublicKey = await getMyVenearyPublicKey(requestKey);
       let decodedData = await decodeMessage(encodedData, vetenaryPublicKey);
       //let tabledata = await filterDatabase("aadRecords", [["aadRecords", selectedAttribute, inputValue]])
-      let jsonString = [await entryStringToJson(decodedData)];
+      let jsonString = [await parseEntryToObject(decodedData)];
       setJsonData(jsonString);
       setInfoBoxData({
         title: title,

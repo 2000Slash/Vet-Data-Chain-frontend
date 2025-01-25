@@ -2,6 +2,59 @@ import * as React from "react";
 import "../../styles/details/Filter.css";
 import { getAllTableNamess, getAllFields } from "../../utils/sqlRequests";
 
+
+const nameDictionary = {
+  aadRecords: "AaD-Record",
+  contactDataFarmer: "Contact details (farmer)",
+  contactDataVetenary: "Contact details (veterinary)",
+  dateOfIssue: "Date of issue",
+  signatures: "Signatures",
+  recordId: "Record ID",
+  numberOfAnimals: "Number of Animals",
+  animalIDS: "Animal IDs",
+  species: "Species",
+  weight: "Weight (kg)",
+  diagnosis: "Diagnosis",
+  diagnosisDate: "Diagnosis Date",
+  medicationName: "Medication Name",
+  activeIngredient: "Active Ingredient",
+  pharmaceuticalForm: "Pharmaceutical Form",
+  batchName: "Batch Name",
+  applicationAmount: "Application Amount (ml)",
+  dosagePerAnimalDay: "Dosage Per Animal/Day (mg)",
+  routeOfAdministration: "Route of Administration",
+  durationAndTiming: "Duration and Timing",
+  withdrawalEdible: "Withdrawal Period (Edible)",
+  withdrawalMilk: "Withdrawal Period (Milk)",
+  withdrawalEggs: "Withdrawal Period (Eggs)",
+  withdrawalHoney: "Withdrawal Period (Honey)",
+  treatmentDays: "Treatment Days",
+  effectiveDays: "Effective Days",
+  contactDataFarmerId: "Contact Data Farmer ID",
+  contactDataVetenaryId: "Contact Data Veterinary ID",
+  dateOfIssueId: "Date of Issue ID",
+  signatureId: "Signature ID",
+  farmerTitle: "Farmer Title",
+  farmerFirstName: "First Name",
+  farmerLastName: "Last Name",
+  farmerStreet: "Street",
+  farmerHouseNumber: "House Number",
+  farmerPostalCode: "Postal Code",
+  farmerCity: "City",
+  farmerPhoneNumber: "Phone Number",
+  vetTitle: "Veterinary Title",
+  vetFirstName: "First Name",
+  vetLastName: "Last Name",
+  vetStreet: "Street",
+  vetHuseNumber: "House Number",
+  vetPostalCode: "Postal Code",
+  vetCity: "City",
+  signatureVetenary: "Veterinary Signature",
+  signatureFarmer: "Farmer Signature",
+
+};
+
+
 const Filter = ({
   onFilterSubmit,
 }: {
@@ -13,9 +66,9 @@ const Filter = ({
 }) => {
   const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
   const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
-  const [openInputFilter, setOpenInputFiler] = React.useState(false);
-  const [selectedTable, setSelectedTable] = React.useState("Table ID");
-  const [selectedAttribute, setSelectedAttribute] = React.useState("");
+  const [openInputFilter, setOpenInputFilter] = React.useState(false);
+  const [selectedTable, setSelectedTable] = React.useState(initialSelectedTable);
+  const [selectedAttribute, setSelectedAttribute] = React.useState( initialSelectedAttribute);
   const [tableNames, setTableNames] = React.useState<{ name: string }[]>([]);
   const [fieldNames, setFieldNames] = React.useState<{ name: string }[]>([]);
   const [inputValue, setInputValue] = React.useState("");
@@ -98,16 +151,19 @@ const Filter = ({
           </button>
           {openFirstFilter ? (
             <ul className="menu">
-              {tableNames.map((table, index) => (
-                <li key={index} className="menu-item">
-                  <button
-                    className="menu-button"
-                    onClick={() => handleButtonInFirstFilter(table.name)}
-                  >
-                    {table.name}
-                  </button>
-                </li>
-              ))}
+              {tableNames.map((table, index) => {
+                let displayText = nameDictionary[table.name];
+                return (
+                  <li key={index} className="menu-item">
+                    <button
+                      className="menu-button"
+                      onClick={() => handleButtonInFirstFilter(table.name)}
+                    >
+                      {displayText}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           ) : null}
         </div>
@@ -125,7 +181,7 @@ const Filter = ({
                       className="menu-button"
                       onClick={() => handleButtonInSecondFilter(field.name)}
                     >
-                      {field.name}
+                      {nameDictionary[field.name]}
                     </button>
                   </li>
                 ))}
