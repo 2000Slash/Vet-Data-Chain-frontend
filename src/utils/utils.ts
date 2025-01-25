@@ -6,8 +6,8 @@ import axios from "axios";
 import pLimit from "p-limit";
 const limit = pLimit(100);
 
-const vetOfficeAddress = "3N5dkUCjEV1XHmQo41oQknanomGGqp1AzYZ";
-const vetOfficepubKey = "5hob7zV54Y57PXP5GtwKMGgQUwYDSqF658SDVktZ3KCQ";
+const vetOfficeAddress = "3N8tegG9cYbM2YNVhTv3d84h2AggeWXvfS1"
+const vetOfficepubKey = "5i2c6UESN3Wefbvwv2Fnk9hZzDE4yVAwDWB5NBeM3SYy"
 
 export async function fetchRegexData(
   nodeURL: string,

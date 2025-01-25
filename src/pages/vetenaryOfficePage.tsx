@@ -21,6 +21,7 @@ const Vetenary_office_Page = () => {
     table: string;
     attribute: string;
     value: string;
+    operator?: string
   };
   const [filters, setFilters] = useState<FilterType[]>([]);
 
@@ -28,13 +29,15 @@ const Vetenary_office_Page = () => {
     selectedTable: string,
     selectedAttribute: string,
     inputValue: string,
-    filterIndex: number
+    filterIndex: number,
+    selectedOperator: string
   ) => {
     if (selectedTable && selectedAttribute && inputValue) {
       const additionalFilter: FilterType = [
         selectedTable,
         selectedAttribute,
         inputValue,
+        selectedOperator
       ];
       console.log("Index filter added:", filterIndex);
       const updatedFilter = [...filters, additionalFilter];
