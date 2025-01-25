@@ -7,54 +7,113 @@ import { loadAllVetOfficeData } from "../utils/utils";
 import { filterDatabase, getAntibioticSummary } from "../utils/sqlRequests";
 import Filter from "../components/shared_components/Filter";
 
-
 const Vetenary_office_Page = () => {
   const [tableData, setTableData] = useState<any>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [laoding, setLoading] = useState<boolean>(false);
+  const [tableValue, setTableValue] = useState("Table");
+  const [attributeValue, setAttributeValue] = useState("");
+  const [textValue, setTextValue] = useState("");
+  const [resetKey, setResetKey] = useState(0);
+  const [buttonStatus, setButtonStatus] = useState<boolean[]>([false]);
 
   type FilterType = {
     table: string;
     attribute: string;
     value: string;
   };
-  const [filter, setFilter] = useState<FilterType[]>([]);
+  const [filters, setFilters] = useState<FilterType[]>([]);
 
   const handleFilterSubmit = async (
     selectedTable: string,
     selectedAttribute: string,
-    inputValue: string
+    inputValue: string,
+    filterIndex: number
   ) => {
-    if (selectedTable === "" && selectedAttribute === "" && inputValue === "") {
-        const resetFilter: FilterType = [];
-        setFilter(resetFilter);
-        filterDatabase("aadRecords",resetFilter)
-          .then((data) => {
-            setTableData(data);
-          })
-          .catch((error) => {
-            console.error("Fehler beim Abrufen der gefilterten Daten:", error);
-          });
+    if (selectedTable && selectedAttribute && inputValue) {
+      const additionalFilter: FilterType = [
+        selectedTable,
+        selectedAttribute,
+        inputValue,
+      ];
+      console.log("Index filter added:", filterIndex);
+      const updatedFilter = [...filters, additionalFilter];
+      setFilters(updatedFilter);
+      const updatedButtonStatus = [...buttonStatus];
+
+      updatedButtonStatus[filterIndex] = true;
+
+      if (filterIndex + 1 !== buttonStatus.length) {
+        updatedButtonStatus.push(false);
+      }
+      setButtonStatus(updatedButtonStatus);
+      console.log("Neuerrrr Filter", updatedFilter);
+      console.log("Neuer Buttonstatus:", updatedButtonStatus);
     } else {
-      const additionalFilter: FilterType = [selectedTable, selectedAttribute, inputValue];
-      const updatedFilter = [...filter,additionalFilter];
-      setFilter(updatedFilter);
-      filterDatabase("aadRecords",updatedFilter)
+      alert("Bitte füllen Sie alle Felder aus.");
+    }
+  };
+
+  const handleApplyFilters = async () => {
+    if (filters.length > 0) {
+      console.log("Alle Filter:", filters);
+      const dataForTable = await filterDatabase("aadRecords", filters);
+      setTableData(dataForTable);
+      getAntibioticSummary(filters)
         .then((data) => {
-          setTableData(data);
+          setReportData(data);
         })
         .catch((error) => {
           console.error("Fehler beim Abrufen der gefilterten Daten:", error);
         });
+    } else {
+      alert("Keine Filter angewendet.");
     }
+  };
 
-    getAntibioticSummary([[selectedTable, selectedAttribute, inputValue]])
-      .then((data) => {
-        setReportData(data);
-      })
-      .catch((error) => {
-        console.error("Fehler beim Abrufen der gefilterten Daten:", error);
-      });
+  const handleRemoveFilter = (index: number) => {
+    console.log("Remove filter starts");
+    console.log("Old filter", filters);
+    console.log("Index for remove", index);
+    const updatedFilters = filters.filter((_, i) => i !== index);
+    console.log("New filter", updatedFilters);
+    setFilters(updatedFilters);
+
+    const updatedButtonStatus = [...buttonStatus];
+
+    if (updatedButtonStatus[index] === true) {
+      updatedButtonStatus[index] = false;
+    }
+    setButtonStatus(updatedButtonStatus);
+    console.log("New button status", updatedButtonStatus);
+
+    if (updatedFilters.length === 0) {
+      setTableValue("Table ID");
+      setAttributeValue("");
+      setTextValue("");
+    }
+  };
+
+  const handleResetButton = async () => {
+    setFilters([]);
+    setTableValue("Table ID");
+    setAttributeValue("");
+    setTextValue("");
+    setResetKey((prevKey) => prevKey + 1);
+    setButtonStatus([]);
+    setLoading(true);
+
+    try {
+      const dataForTable = await filterDatabase("aadRecords", []);
+      const summaryData = await getAntibioticSummary([]);
+
+      setTableData(dataForTable);
+      setReportData(summaryData);
+    } catch (error) {
+      console.error("Fehler beim Zurücksetzen der Daten:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -64,12 +123,12 @@ const Vetenary_office_Page = () => {
         await loadAllVetOfficeData();
         const dataForTable = await filterDatabase("aadRecords", []);
         getAntibioticSummary([])
-      .then((data) => {
-        setReportData(data);
-      })
-      .catch((error) => {
-        console.error("Fehler beim Abrufen der gefilterten Daten:", error);
-      });
+          .then((data) => {
+            setReportData(data);
+          })
+          .catch((error) => {
+            console.error("Fehler beim Abrufen der gefilterten Daten:", error);
+          });
         setTableData(dataForTable);
         setLoading(false);
       } catch (err) {
@@ -83,14 +142,55 @@ const Vetenary_office_Page = () => {
   return (
     <div>
       <Header role="Veterinary Office" />
-      <Filter onFilterSubmit={handleFilterSubmit} />
+      <div>
+        <div>
+          <Filter
+            key={resetKey}
+            onFilterSubmit={handleFilterSubmit}
+            initialSelectedTable={tableValue}
+            initialSelectedAttribute={attributeValue}
+            initialInputValue={textValue}
+            isAdded={filters.length > 0 && filters[0].table !== "Table ID"}
+            onRemoveFilter={handleRemoveFilter}
+            filterIndex={0}
+            isDisabled={buttonStatus[0]}
+          />
+        </div>
+
+        {filters.length > 0 &&
+          filters.map((filter, index) => (
+            <div key={index}>
+              <Filter
+                onFilterSubmit={handleFilterSubmit}
+                initialSelectedTable={filter.table}
+                initialSelectedAttribute={filter.attribute}
+                initialInputValue={filter.value}
+                filterIndex={index + 1}
+                onRemoveFilter={handleRemoveFilter}
+                isAdded={buttonStatus[index + 1]}
+                isDisabled={buttonStatus[index + 1]}
+              />
+            </div>
+          ))}
+      </div>
+      <div>
+        <button className="input-button" onClick={handleApplyFilters}>
+          Apply Filter
+        </button>
+        <button className="input-button" onClick={handleResetButton}>
+          Reset
+        </button>
+      </div>
       <div>
         {laoding ? (
           <Loading />
         ) : tableData ? (
           <>
             <Table jsonData={tableData} />
-            <Report tabNames={["Antibiotic stats","Other Menu 1", "Other Menu2"]} jsonData={[reportData,,]} />
+            <Report
+              tabNames={["Antibiotic stats", "Other Menu 1", "Other Menu 2"]}
+              jsonData={[reportData, ,]}
+            />
           </>
         ) : (
           <p>No data available.</p>

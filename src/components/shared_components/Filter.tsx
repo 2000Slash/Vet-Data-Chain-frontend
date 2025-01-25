@@ -57,23 +57,40 @@ const nameDictionary = {
 
 const Filter = ({
   onFilterSubmit,
+  initialSelectedTable = "Table",
+  initialSelectedAttribute = "",
+  initialInputValue = "",
+  filterIndex = -1,
+  onRemoveFilter,
+  isAdded,
+  isDisabled,
 }: {
   onFilterSubmit: (
     selectedTable: string,
     selectedAttribute: string,
-    inputValue: string
+    inputValue: string,
+    filterIndex: number
   ) => void;
+  initialSelectedTable?: string;
+  initialSelectedAttribute?: string;
+  initialInputValue?: string;
+  filterIndex?: number;
+  onRemoveFilter?: (index: number) => void;
+  isAdded?: boolean;
+  isDisabled?: boolean;
 }) => {
   const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
   const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
   const [openInputFilter, setOpenInputFilter] = React.useState(false);
-  const [selectedTable, setSelectedTable] = React.useState(initialSelectedTable);
-  const [selectedAttribute, setSelectedAttribute] = React.useState( initialSelectedAttribute);
+  const [selectedTable, setSelectedTable] =
+    React.useState(initialSelectedTable);
+  const [selectedAttribute, setSelectedAttribute] = React.useState(
+    initialSelectedAttribute
+  );
   const [tableNames, setTableNames] = React.useState<{ name: string }[]>([]);
   const [fieldNames, setFieldNames] = React.useState<{ name: string }[]>([]);
-  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue, setInputValue] = React.useState(initialInputValue);
   const [secondMenuVisible, setSecondMenuVisible] = React.useState(false);
-  const [appliedFilters, setAppliedFilters] = React.useState<{table: string, attribute: string; value: string }[]>([]);
 
   const handleOpenFirstFilter = async () => {
     setOpenFirstFilter(!openFirstFilter);
@@ -89,7 +106,7 @@ const Filter = ({
 
   const handleOpenSecondFilter = async () => {
     setOpenSecondFilter(!openSecondFilter);
-    setOpenInputFiler(!openInputFilter);
+    setOpenInputFilter(!openInputFilter);
 
     getAllFields(selectedTable)
       .then((data) => {
@@ -120,39 +137,40 @@ const Filter = ({
   };
 
   const handleFilterClick = () => {
-    if (selectedTable !== "Table ID" && selectedAttribute && inputValue) {    
-      onFilterSubmit(selectedTable, selectedAttribute, inputValue);
-      setSecondMenuVisible(false);
-      setOpenInputFiler(false);
-      setSelectedTable("Table ID");
-      setSelectedAttribute("");
-      setInputValue("");
+    if (selectedTable !== "Table ID" && selectedAttribute && inputValue) {
+      console.log("Werte:", selectedTable, selectedAttribute, inputValue);
+      console.log("Filter index:", filterIndex);
+      onFilterSubmit(selectedTable, selectedAttribute, inputValue, filterIndex);
     } else {
       alert("Please fill in all fields.");
     }
   };
 
-  const handleResetClick = () => {
-    onFilterSubmit("", "", "");
-    setSecondMenuVisible(false);
-    setOpenInputFiler(false);
-    setSelectedTable("Table ID");
-    setSelectedAttribute("");
-    setInputValue("");
-    setAppliedFilters([]);
+  const handleRemoveClick = () => {
+    console.log("Remove clicked, filter", filterIndex);
+    if (onRemoveFilter && filterIndex !== -1) {
+      onRemoveFilter(filterIndex);
+    }
   };
 
   return (
     <>
       <div className="filter-container">
         <div className="dropdown">
-          <button className="menu-button" onClick={handleOpenFirstFilter}>
+          <button
+            className={`menu-button ${
+              isDisabled ? "menu-button-disabled" : ""
+            }`}
+            onClick={handleOpenFirstFilter}
+            disabled={isDisabled}
+          >
             {selectedTable}
           </button>
           {openFirstFilter ? (
             <ul className="menu">
               {tableNames.map((table, index) => {
                 let displayText = nameDictionary[table.name];
+ 
                 return (
                   <li key={index} className="menu-item">
                     <button
@@ -170,7 +188,13 @@ const Filter = ({
 
         {secondMenuVisible && (
           <div className="dropdown">
-            <button className="menu-button" onClick={handleOpenSecondFilter}>
+            <button
+              className={`menu-button ${
+                isDisabled ? "menu-button-disabled" : ""
+              }`}
+              onClick={handleOpenSecondFilter}
+              disabled={isDisabled}
+            >
               {selectedAttribute || selectedTable}
             </button>
             {openSecondFilter ? (
@@ -201,29 +225,17 @@ const Filter = ({
                 value={inputValue}
                 onChange={handleInputChange}
                 placeholder="Type your filter text"
+                disabled={isDisabled}
               />
-              <button className="input-button" onClick={handleFilterClick}>
-                Filter
+              <button
+                className={`add-button ${isAdded ? "remove-button" : ""}`}
+                onClick={isAdded ? handleRemoveClick : handleFilterClick}
+              >
+                {isAdded ? "-" : "+"}
               </button>
-             
             </div>
           )}
       </div>
-      
-        <div className="appliedFilters-container">
-          <h3>Applied Filters</h3>
-          <ul className="appliedFilters-list">
-            {appliedFilters.map((filter, index) => (
-              <li key={index}>
-                Attribute: {filter.attribute}, Value: {filter.value}
-              </li>
-            ))}
-          </ul>
-          <button className="input-button" onClick={handleResetClick}>
-            Reset
-          </button>
-        </div>
-      
     </>
   );
 };

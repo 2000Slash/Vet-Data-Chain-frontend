@@ -50,3 +50,19 @@
 .appliedFilters-list {
     list-style-type: none;
 }
+
+.add-button {
+    background-color: #4CAF50;
+    border-radius: 50px;
+    margin-left: 10px;
+}
+
+.remove-button {
+    background-color: red;
+    border-radius: 50px;
+    margin-left: 10px;
+}
+
+.menu-button-disabled {
+    opacity: 0.8;
+}
