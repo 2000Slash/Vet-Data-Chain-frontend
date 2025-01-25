@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../components/shared_components/Header";
 import Table from "../components/shared_components/Table";
-import Report from "../components/veterinary_office/report";
+import Report from "../components/veterinary_office/Report";
 import Loading from "../components/shared_components/Loading";
 import { loadAllVetOfficeData } from "../utils/utils";
 import { filterDatabase, getAntibioticSummary } from "../utils/sqlRequests";
