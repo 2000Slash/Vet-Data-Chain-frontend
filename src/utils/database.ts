@@ -21,7 +21,7 @@ export async function initDatabase() {
   if (!dbInstance) {
     const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
     const worker = new Worker(bundle.mainWorker!);
-    const logger = new duckdb.ConsoleLogger();
+    const logger = new duckdb.VoidLogger();
     const db = new duckdb.AsyncDuckDB(logger, worker);
 
     await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
@@ -45,7 +45,7 @@ export async function initDatabase() {
       await conn.send(`
   CREATE TABLE IF NOT EXISTS dateOfIssue (
       recordId INTEGER DEFAULT (nextval('dateOfIssue_seq')) PRIMARY KEY,
-      dateOfIssue TEXT NOT NULL,
+      dateOfIssue DATETIME NOT NULL,
   );
 `),
 

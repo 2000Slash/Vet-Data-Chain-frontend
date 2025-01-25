@@ -45,19 +45,20 @@ function duckDBTableDataToArray(table: { schema: { fields: any[]; }; batches: an
 }
 
 
-type RequestFilter = [tableName: string, key: string, value: any];
+type RequestFilter = [tableName: string, key: string,  value: any, operator?: string];
 type RequestFilters = RequestFilter[];
-  export async function filterDatabase(requestedTable:string, requestFilters: RequestFilters ){
-    const tableAliases = {
-      aadRecords: "aad",
-      dateOfIssue: "di",
-      signatures: "sig",
-      contactDataVetenary: "cdv",
-      contactDataFarmer: "cdf",
-    };
 
-    let conn = getConnection()
-    let query = `
+export async function filterDatabase(requestedTable: string, requestFilters: RequestFilters) {
+  const tableAliases = {
+    aadRecords: "aad",
+    dateOfIssue: "di",
+    signatures: "sig",
+    contactDataVetenary: "cdv",
+    contactDataFarmer: "cdf",
+  };
+
+  let conn = getConnection();
+  let query = `
     SELECT ${tableAliases[requestedTable]}.*
     FROM 
         aadRecords AS ${tableAliases.aadRecords}
@@ -69,18 +70,18 @@ type RequestFilters = RequestFilter[];
         ON ${tableAliases.aadRecords}.contactDataVetenaryId = ${tableAliases.contactDataVetenary}.recordId
     JOIN contactDataFarmer AS ${tableAliases.contactDataFarmer}
         ON ${tableAliases.aadRecords}.contactDataFarmerId = ${tableAliases.contactDataFarmer}.recordId
-  `
+  `;
 
   requestFilters.forEach((filter, index) => {
-    const [tableName, key, value] = filter;
+    const [tableName, key, value, operator = "="] = filter;
     const alias = tableAliases[tableName];
-    const condition = `${alias}.${key} = '${value}'`;
+    const condition = `${alias}.${key} ${operator} '${value}'`;
     query += index === 0 ? ` WHERE ${condition}` : ` AND ${condition}`;
   });
-  let response = await conn.query(query)
-  return(duckDBTableDataToArray(response))
-  }
 
+  let response = await conn.query(query);
+  return duckDBTableDataToArray(response);
+}
   
 
   export async function getAntibioticSummary(requestFilters) {
