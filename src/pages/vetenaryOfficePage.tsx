@@ -6,6 +6,7 @@ import Loading from "../components/shared_components/Loading";
 import { loadAllVetOfficeData } from "../utils/utils";
 import { filterDatabase, getAntibioticSummary } from "../utils/sqlRequests";
 import Filter from "../components/shared_components/Filter";
+import "../styles/details/VetenaryOfficePage.css"
 
 const Vetenary_office_Page = () => {
   const [tableData, setTableData] = useState<any>(null);
@@ -16,6 +17,7 @@ const Vetenary_office_Page = () => {
   const [textValue, setTextValue] = useState("");
   const [resetKey, setResetKey] = useState(0);
   const [buttonStatus, setButtonStatus] = useState<boolean[]>([false]);
+  const [visibleReport, setVisibleReport] = useState(false)
 
   type FilterType = {
     table: string;
@@ -143,7 +145,7 @@ const Vetenary_office_Page = () => {
     <div>
       <Header role="Veterinary Office" />
       <div>
-        <div>
+        <div className="containerfilter">
           <Filter
             key={resetKey}
             onFilterSubmit={handleFilterSubmit}
@@ -173,11 +175,11 @@ const Vetenary_office_Page = () => {
             </div>
           ))}
       </div>
-      <div>
-        <button className="input-button" onClick={handleApplyFilters}>
+      <div className="containerfilter">
+        <button className="input-button function " onClick={handleApplyFilters}>
           Apply Filter
         </button>
-        <button className="input-button" onClick={handleResetButton}>
+        <button  className="input-button function" onClick={handleResetButton}>
           Reset
         </button>
       </div>

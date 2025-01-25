@@ -1,27 +1,54 @@
-.filter-container {
+.filter-container, .appliedFilters-container {
     display: flex; 
+    width: 50em;
 }
 
-.dropdown {
-    margin: 50px;
-    
+.dropdown, .input-field-container {
+    padding-right: 1em;
+    padding-top: 0.5em;
 }
 
-.menu {
+.menu, .appliedFilters-list {
     list-style-type: none; 
     padding: 0; 
     margin: 0; 
-    
-}
-
-.menu-button {
-    background-color: #4a4a4a;
-    color: white;
-    height: 40px;
 }
 
 .menu-item {
     margin: 5px;
+}
+
+.appliedFilters-container {
+    margin-left: 20px;
+}
+
+.add-button, .remove-button {
+    border-radius: 50px;
+    margin-left: 10px;
+}
+
+.add-button {
+    background-color: #4CAF50;
+}
+
+.remove-button {
+    background-color: red;
+}
+
+.menu-button-disabled {
+    opacity: 0.8;
+}
+
+.menu-button, .input-button {
+    background-color: #4a4a4a;
+    color: white;
+    height: 40px;
+    width: 100%;
+}
+
+.input-button.function{
+    width: 15em;
+    margin-top: 2em;
 }
 
 .input-field {
@@ -29,40 +56,4 @@
     border: none;
     border-radius: 8px;
     padding-left: 5px;
-}
-
-.input-field-container {
-    margin: 50px;
-}
-
-.input-button {
-    background-color: #4a4a4a;
-    color: white;
-    height: 40px;
-    margin-left: 10px;
-}
-
-.appliedFilters-container {
-    margin-left: 20px;
-    display: flex;
-}
-
-.appliedFilters-list {
-    list-style-type: none;
-}
-
-.add-button {
-    background-color: #4CAF50;
-    border-radius: 50px;
-    margin-left: 10px;
-}
-
-.remove-button {
-    background-color: red;
-    border-radius: 50px;
-    margin-left: 10px;
-}
-
-.menu-button-disabled {
-    opacity: 0.8;
 }
