@@ -73,9 +73,33 @@ export async function filterDatabase(requestedTable: string, requestFilters: Req
   `;
 
   requestFilters.forEach((filter, index) => {
-    const [tableName, key, value, operator = "="] = filter;
+    let [tableName, key, value, operator = "="] = filter;
     const alias = tableAliases[tableName];
-    const condition = `${alias}.${key} ${operator} '${value}'`;
+    let condition = `${alias}.${key} ${operator} '${value}'`;
+
+    if (key === "dateOfIssue") {
+      // Convert DD.MM.YYYY to YYYY-MM-DD HH:MM:SS
+      let [day, month, year] = value.split(".");
+      let startOfDay = `${year}-${month}-${day} 00:00:00`;
+      let endOfDay = `${year}-${month}-${day} 23:59:59`;
+
+      if (operator === "=") {
+          condition = `${alias}.${key} BETWEEN CAST('${startOfDay}' AS TIMESTAMP) AND CAST('${endOfDay}' AS TIMESTAMP)`;
+      } else if (operator === ">") {
+          condition = `${alias}.${key} > CAST('${endOfDay}' AS TIMESTAMP)`;
+      } else if (operator === ">=") {
+          condition = `${alias}.${key} >= CAST('${startOfDay}' AS TIMESTAMP)`;
+      } else if (operator === "<") {
+          condition = `${alias}.${key} < CAST('${startOfDay}' AS TIMESTAMP)`;
+      } else if (operator === "<=") {
+          condition = `${alias}.${key} <= CAST('${endOfDay}' AS TIMESTAMP)`;
+      } else if (operator === "!=") {
+        condition = `${alias}.${key} != CAST('${endOfDay}' AS TIMESTAMP)`;
+    }
+  }
+  
+
+    
     query += index === 0 ? ` WHERE ${condition}` : ` AND ${condition}`;
   });
 
@@ -104,9 +128,28 @@ export async function filterDatabase(requestedTable: string, requestFilters: Req
     `;
 
     requestFilters.forEach((filter, index) => {
-        const [tableName, key, value] = filter;
+        let [tableName, key, value , operator = "="] = filter;
         const alias = tableAliases[tableName];
-        const condition = `${alias}.${key} = '${value}'`;
+        let condition = `${alias}.${key} = '${value}'`;
+        if (key === "dateOfIssue") {
+          let [day, month, year] = value.split(".");
+          let startOfDay = `${year}-${month}-${day} 00:00:00`;
+          let endOfDay = `${year}-${month}-${day} 23:59:59`;
+          if (operator === "=") {
+              condition = `${alias}.${key} BETWEEN CAST('${startOfDay}' AS TIMESTAMP) AND CAST('${endOfDay}' AS TIMESTAMP)`;
+          } else if (operator === ">") {
+              condition = `${alias}.${key} > CAST('${endOfDay}' AS TIMESTAMP)`;
+          } else if (operator === ">=") {
+              condition = `${alias}.${key} >= CAST('${startOfDay}' AS TIMESTAMP)`;
+          } else if (operator === "<") {
+              condition = `${alias}.${key} < CAST('${startOfDay}' AS TIMESTAMP)`;
+          } else if (operator === "<=") {
+              condition = `${alias}.${key} <= CAST('${endOfDay}' AS TIMESTAMP)`;
+          }else if (operator === "!=") {
+            condition = `${alias}.${key} != CAST('${endOfDay}' AS TIMESTAMP)`;
+        }
+      }
+      
         query += index === 0 ? ` WHERE ${condition}` : ` AND ${condition}`;
     });
 
