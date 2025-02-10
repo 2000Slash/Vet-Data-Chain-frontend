@@ -2,7 +2,6 @@ import * as React from "react";
 import "../../styles/details/Filter.css";
 import { getAllTableNamess, getAllFields } from "../../utils/sqlRequests";
 
-
 const nameDictionary = {
   aadRecords: "AaD-Record",
   contactDataFarmer: "Contact details (farmer)",
@@ -51,9 +50,16 @@ const nameDictionary = {
   vetCity: "City",
   signatureVetenary: "Veterinary Signature",
   signatureFarmer: "Farmer Signature",
-
 };
 
+const operators = [
+  ">",
+  "<",
+  "=",
+  ">=",
+  "<=",
+  "!=",
+];
 
 const Filter = ({
   onFilterSubmit,
@@ -69,7 +75,8 @@ const Filter = ({
     selectedTable: string,
     selectedAttribute: string,
     inputValue: string,
-    filterIndex: number
+    filterIndex: number,
+    selectedOperator: string
   ) => void;
   initialSelectedTable?: string;
   initialSelectedAttribute?: string;
@@ -81,12 +88,14 @@ const Filter = ({
 }) => {
   const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
   const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
+  const [openOperatorFilter, setOpenOperatorFilter] = React.useState(false);
   const [openInputFilter, setOpenInputFilter] = React.useState(false);
   const [selectedTable, setSelectedTable] =
     React.useState(initialSelectedTable);
   const [selectedAttribute, setSelectedAttribute] = React.useState(
     initialSelectedAttribute
   );
+  const [selectedOperator, setSelectedOperator] = React.useState("");
   const [tableNames, setTableNames] = React.useState<{ name: string }[]>([]);
   const [fieldNames, setFieldNames] = React.useState<{ name: string }[]>([]);
   const [inputValue, setInputValue] = React.useState(initialInputValue);
@@ -117,6 +126,10 @@ const Filter = ({
       });
   };
 
+  const handleOpenOperatorFilter = () => {
+    setOpenOperatorFilter(!openOperatorFilter);
+  };
+
   const handleButtonInFirstFilter = async (
     buttonText: React.SetStateAction<string>
   ) => {
@@ -136,11 +149,16 @@ const Filter = ({
     setInputValue(event.target.value);
   };
 
+  const handleButtonInOperatorFilter = (buttonText: string) => {
+    setSelectedOperator(buttonText);
+    setOpenOperatorFilter(false);
+  };
+
   const handleFilterClick = () => {
     if (selectedTable !== "Table ID" && selectedAttribute && inputValue) {
       console.log("Werte:", selectedTable, selectedAttribute, inputValue);
       console.log("Filter index:", filterIndex);
-      onFilterSubmit(selectedTable, selectedAttribute, inputValue, filterIndex);
+      onFilterSubmit(selectedTable, selectedAttribute, inputValue, filterIndex, selectedOperator);
     } else {
       alert("Please fill in all fields.");
     }
@@ -170,7 +188,7 @@ const Filter = ({
             <ul className="menu">
               {tableNames.map((table, index) => {
                 let displayText = nameDictionary[table.name];
- 
+
                 return (
                   <li key={index} className="menu-item">
                     <button
@@ -215,8 +233,37 @@ const Filter = ({
         )}
 
         {selectedTable !== "Table ID" &&
+          selectedAttribute && (
+          <div className="dropdown">
+            <button
+              className={`menu-button ${
+                isDisabled ? "menu-button-disabled" : ""
+              }`}
+              onClick={handleOpenOperatorFilter}
+              disabled={isDisabled}
+            >
+              {selectedOperator || "Operator"}
+            </button>
+            {openOperatorFilter && (
+              <ul className="menu">
+                {operators.map((op, index) => (
+                  <li key={index} className="menu-item">
+                    <button
+                      className="menu-button"
+                      onClick={() => handleButtonInOperatorFilter(op)}
+                    >
+                      {op}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {selectedTable !== "Table ID" &&
           selectedAttribute &&
-          openInputFilter && (
+           (
             <div className="input-field-container">
               <input
                 id="inputField"
