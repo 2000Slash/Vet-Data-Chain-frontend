@@ -12,6 +12,7 @@ const Vetenary_office_Page = () => {
   const [tableData, setTableData] = useState<any>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [laoding, setLoading] = useState<boolean>(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [tableValue, setTableValue] = useState("Table");
   const [attributeValue, setAttributeValue] = useState("");
   const [textValue, setTextValue] = useState("");
@@ -125,7 +126,8 @@ const Vetenary_office_Page = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        await loadAllVetOfficeData();
+        setLoadingProgress(0); 
+        await loadAllVetOfficeData(setLoadingProgress);
         const dataForTable = await filterDatabase("aadRecords", []);
         getAntibioticSummary([])
           .then((data) => {
@@ -188,13 +190,13 @@ const Vetenary_office_Page = () => {
       </div>
       <div>
         {laoding ? (
-          <Loading />
+          <Loading progress={loadingProgress} />
         ) : tableData ? (
           <>
             <Table jsonData={tableData} />
             <Report
               tabNames={["Antibiotic stats", "Other Menu 1", "Other Menu 2"]}
-              jsonData={[reportData, ,]}
+              jsonData={[reportData]}
             />
           </>
         ) : (

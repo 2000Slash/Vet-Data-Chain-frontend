@@ -2,12 +2,14 @@ import { address } from "@waves/ts-lib-crypto";
 import { nodeInteraction } from "@waves/waves-transactions";
 import { getConnection } from "./database";
 import { getAllTableNamess, getAllFields } from "./sqlRequests";
+import { libs } from "@waves/waves-transactions";
 import axios from "axios";
-import pLimit from "p-limit";
-const limit = pLimit(100);
 
-const vetOfficeAddress = "3MsuoaqGgtSN8XzQTx3WnuMJyHv2ttGStdv"
-const vetOfficepubKey = "G3mEWYSqKuwB77gUKor6D44Shif92RumcJKumDHGpqQo"
+
+const vetOfficeAddress = "3N5dkUCjEV1XHmQo41oQknanomGGqp1AzYZ"
+const vetOfficepubKey = "ExvXsx8QX6qdSegQwH1o9GD278rzMuqbtRQ6dYAvPvT5"
+const vetOfficeSeed = "fresh zoo rural inflict gas absorb race deliver sister party task soup unfair prepare lab"
+const recipientPrivateKey = libs.crypto.privateKey(vetOfficeSeed);
 
 export async function fetchRegexData(
   nodeURL: string,
@@ -114,7 +116,7 @@ export async function getPendingAaDList(): Promise<string> {
     );
     return String(data?.value);
   } catch (err: any) {
-    console.log(err.message || "An unknown error occurred");
+    console.error(err.message || "An unknown error occurred");
     return "";
   }
 }
@@ -129,7 +131,7 @@ export async function getAaDRecord(aaDKey: string): Promise<string> {
     );
     return String(data?.value);
   } catch (err: any) {
-    console.log(err.message || "An unknown error occurred");
+    console.error(err.message || "An unknown error occurred");
     return "";
   }
 }
@@ -150,10 +152,36 @@ export async function decodeMessage(
   } 
 }
 
+
+const sharedKeyCache: { [key: string]: string } = {}; 
+export function decodeMessageLocally(
+  encryptedMessage: string,
+  senderPublicKey: string
+): string {
+  try {
+    if (!sharedKeyCache[senderPublicKey]) {
+      sharedKeyCache[senderPublicKey] = libs.crypto.sharedKey(
+        recipientPrivateKey,
+        senderPublicKey,
+        "waves"
+      );
+    }
+    const sharedKey = sharedKeyCache[senderPublicKey];
+
+    return libs.crypto.messageDecrypt(
+      sharedKey,
+      libs.crypto.base58Decode(encryptedMessage)
+    );
+  } catch (error) {
+    console.error("Error during local decryption:", error);
+    return "";
+  }
+}
+
 export async function getMyVenearyPublicKey(aaDEntryKey: String) {
   let aaDEntryKeyAsArray = aaDEntryKey.split("_");
   const regexString = `^${aaDEntryKeyAsArray[0]}_.*_${aaDEntryKeyAsArray[1]}$`;
-  console.log(regexString);
+  //console.log(regexString);
   const fetchedData = await fetchRegexData(
     await getKeeperWalletURL(),
     vetOfficeAddress,
@@ -163,24 +191,21 @@ export async function getMyVenearyPublicKey(aaDEntryKey: String) {
   return vetenaryEntryArray[1];
 }
 
-export async function loadAllVetOfficeData() {
+export async function loadAllVetOfficeData(setProgress) {
   let fetchedData = null;
   try {
     const walletURL = await getKeeperWalletURL();
     const walletAddress = await getKeeperWalletAddress();
-    console.log("Fetching data from wallet...");
-    fetchedData = await fetchRegexData(
-      walletURL,
-      walletAddress,
-      `.*_verified$`
-    );
-    console.log(`Fetched ${fetchedData.data.length} entries.`);
+    //console.log("Fetching data from wallet...");
+    fetchedData = await fetchRegexData(walletURL, walletAddress, `.*_verified$`);
+    //console.log(`Fetched ${fetchedData.data.length} entries.`);
   } catch (error) {
     console.error("Error fetching data:", error);
     return;
   }
 
   const batchSize = 1000;
+  const insertPromises = [];
   for (let i = 0; i < fetchedData.data.length; i += batchSize) {
     const batch = fetchedData.data.slice(i, i + batchSize);
 
@@ -189,40 +214,39 @@ export async function loadAllVetOfficeData() {
         fetchedData.data.length / batchSize
       )}`
     );
-    console.log(`Number of messages being decoded: ${batch.length}`);
+    //console.log(`Number of messages being decoded: ${batch.length}`);
 
-    console.time("Decoding Time");
+    ////console.time("Decoding Time");
+
+    // Parallelize decoding and parsing with Promise.all
     const batchResults = await Promise.all(
-      batch.map((entry) =>
-        limit(async () => {
-          try {
-            const decodedMessage = await decodeMessage(
-              entry.value,
-              entry.key.split("_")[0]
-            );
-            return await parseEntryToObject(decodedMessage);
-          } catch (error) {
-            console.error("Error processing entry:", error);
-            return null;
-          }
-        })
-      )
+      batch.map(async (entry) => {
+        try {
+          const decodedMessage = await decodeMessageLocally(entry.value, entry.key.split("_")[0]);
+          return await parseEntryToObject(decodedMessage);
+        } catch (error) {
+          console.error("Error processing entry:", error);
+          return null;
+        }
+      })
     );
-    console.timeEnd("Decoding Time");
+
+    //console.timeEnd("Decoding Time");
 
     const validResults = batchResults.filter((result) => result !== null);
 
-    console.time("Insert Data Time");
-    await Promise.all(
-      validResults.map((data) => limit(() => insertData([data])))
-    );
-    console.timeEnd("Insert Data Time");
-
-    console.log(
-      `Batch ${i / batchSize + 1}: Decoding Time vs Insert Data Time`
-    );
+    //console.time("Insert Data Time");
+    insertPromises.push(insertData(validResults))
+    //console.timeEnd("Insert Data Time");
+    const progressValue = Math.min(100, ((i + batchSize) / fetchedData.data.length) * 100);
+    requestAnimationFrame(() => setProgress(progressValue));
+    //console.log(`Batch ${i / batchSize + 1}: Decoding Time vs Insert Data Time`);
   }
+
+  await Promise.all(insertPromises);
+  setProgress(100)
 }
+
 
 export async function parseEntryToObject(incomingEntry: string) {
   const segments = incomingEntry.split(";");
@@ -260,90 +284,102 @@ export async function insertData(dataArray) {
   try {
     const conn = getConnection();
 
-    await Promise.all(
-      dataArray.map(async (data) => {
-        let signatures = data.Signatures;
-        let response = await conn.query(`
-        INSERT INTO signatures (signatureVetenary, signatureFarmer)
-        VALUES ('${signatures[0]}', '${signatures[1]}')
-        RETURNING recordId;
-      `);
-        let signatureKey = response.batches[0].getChild("recordId").get(0);
+    let querySignature = "INSERT INTO signatures (signatureVetenary, signatureFarmer) VALUES";
+    let queryDateOfIssue = "INSERT INTO dateOfIssue (dateOfIssue) VALUES";
+    let queryContactVeterinary = "INSERT INTO contactDataVetenary (vetTitle, vetFirstName, vetLastName, vetStreet, vetHuseNumber, vetPostalCode, vetCity) VALUES";
+    let queryContactFarmer = "INSERT INTO contactDataFarmer (farmerTitle, farmerFirstName, farmerLastName, farmerStreet, farmerHouseNumber, farmerPostalCode, farmerCity, farmerPhoneNumber) VALUES";
+    let queryAadRecords =`
+    INSERT INTO aadRecords (
+        numberOfAnimals, 
+        animalIDS, 
+        species, 
+        weight, 
+        diagnosis, 
+        diagnosisDate, 
+        medicationName, 
+        activeIngredient, 
+        pharmaceuticalForm, 
+        batchName, 
+        applicationAmount, 
+        dosagePerAnimalDay, 
+        routeOfAdministration, 
+        durationAndTiming, 
+        withdrawalEdible, 
+        withdrawalMilk, 
+        withdrawalEggs, 
+        withdrawalHoney, 
+        treatmentDays, 
+        effectiveDays, 
+        contactDataFarmerId, 
+        contactDataVetenaryId, 
+        dateOfIssueId, 
+        signatureId
+    )VALUES`;
 
-        let dateOfIssue = data.DateOfIssue;
-        response = await conn.query(`
-        INSERT INTO dateOfIssue (dateOfIssue)
-        VALUES ('${dateOfIssue}')
-        RETURNING recordId;
-      `);
-        let dateOfIssueKey = response.batches[0].getChild("recordId").get(0);
+    let valuesSignatures = [];
+    let valuesDateOfIssue = [];
+    let valuesContactVeterinary = [];
+    let valuesContactFarmer = [];
+    let valuesAadRecords = [];
 
-        let contactDataVeterinary = data.ContactDataVeterinary;
-        response = await conn.query(`
-        INSERT INTO contactDataVetenary (
-          vetTitle, vetFirstName, vetLastName, vetStreet,
-          vetHuseNumber, vetPostalCode, vetCity
-        )
-        VALUES (
-          '${contactDataVeterinary[0]}', '${contactDataVeterinary[1]}',
-          '${contactDataVeterinary[2]}', '${contactDataVeterinary[3]}',
-          '${contactDataVeterinary[4]}', '${contactDataVeterinary[5]}',
-          '${contactDataVeterinary[6]}'
-        )
-        RETURNING recordId;
-      `);
-        const contactDataVeterinaryKey = response.batches[0]
-          .getChild("recordId")
-          .get(0);
+    for (let i = 0; i < dataArray.length; i++) {
+      let data = dataArray[i];
+      valuesSignatures.push(`('${data.Signatures[0]}', '${data.Signatures[1]}')`);
+      valuesDateOfIssue.push(`('${data.DateOfIssue}')`);
+      valuesContactVeterinary.push(`('${data.ContactDataVeterinary[0]}', 
+                                      '${data.ContactDataVeterinary[1]}', 
+                                      '${data.ContactDataVeterinary[2]}', 
+                                      '${data.ContactDataVeterinary[3]}', 
+                                      '${data.ContactDataVeterinary[4]}', 
+                                      '${data.ContactDataVeterinary[5]}', 
+                                      '${data.ContactDataVeterinary[6]}')`);
+      
+      valuesContactFarmer.push(`('${data.ContactDataFarmer[0]}', 
+                                  '${data.ContactDataFarmer[1]}', 
+                                  '${data.ContactDataFarmer[2]}', 
+                                  '${data.ContactDataFarmer[3]}', 
+                                  '${data.ContactDataFarmer[4]}', '
+                                  ${data.ContactDataFarmer[5]}', 
+                                  '${data.ContactDataFarmer[6]}', 
+                                  '${data.ContactDataFarmer[7]}')`);
+    }
 
-        let contactDataFarmer = data.ContactDataFarmer;
-        response = await conn.query(`
-        INSERT INTO contactDataFarmer (
-          farmerTitle, farmerFirstName, farmerLastName, farmerStreet,
-          farmerHouseNumber, farmerPostalCode, farmerCity, farmerPhoneNumber
-        )
-        VALUES (
-          '${contactDataFarmer[0]}', '${contactDataFarmer[1]}',
-          '${contactDataFarmer[2]}', '${contactDataFarmer[3]}',
-          '${contactDataFarmer[4]}', '${contactDataFarmer[5]}',
-          '${contactDataFarmer[6]}', '${contactDataFarmer[7]}'
-        )
-        RETURNING recordId;
-      `);
-        const contactDataFarmerKey = response.batches[0]
-          .getChild("recordId")
-          .get(0);
+    querySignature += valuesSignatures.join(",") + " RETURNING recordId;";
+    queryDateOfIssue += valuesDateOfIssue.join(",") + " RETURNING recordId;";
+    queryContactVeterinary += valuesContactVeterinary.join(",") + " RETURNING recordId;";
+    queryContactFarmer += valuesContactFarmer.join(",") + " RETURNING recordId;";
 
-        let aadRecords = data.AaDRecords;
-        await Promise.all(
-          aadRecords.map(async (aadRecord) => {
-            await conn.query(`
-          INSERT INTO aadRecords (
-            numberOfAnimals, animalIDS, species, weight, diagnosis,
-            diagnosisDate, medicationName, activeIngredient,
-            pharmaceuticalForm, batchName, applicationAmount,
-            dosagePerAnimalDay, routeOfAdministration, durationAndTiming,
-            withdrawalEdible, withdrawalMilk, withdrawalEggs,
-            withdrawalHoney, treatmentDays, effectiveDays,
-            contactDataFarmerId, contactDataVetenaryId,
-            dateOfIssueId, signatureId
-          )
-          VALUES (
-            '${aadRecord[0]}', ${aadRecord[1]}, '${aadRecord[2]}',
-            ${aadRecord[3]}, '${aadRecord[4]}', '${aadRecord[5]}',
-            '${aadRecord[6]}', '${aadRecord[7]}', '${aadRecord[8]}',
-            '${aadRecord[9]}', ${aadRecord[10]}, ${aadRecord[11]},
-            '${aadRecord[12]}', '${aadRecord[13]}', ${aadRecord[14]},
-            ${aadRecord[15]}, ${aadRecord[16]}, ${aadRecord[17]},
-            ${aadRecord[18]}, ${aadRecord[19]}, ${contactDataFarmerKey},
-            ${contactDataVeterinaryKey}, ${dateOfIssueKey}, ${signatureKey}
-          )
-          RETURNING recordId;
-        `);
-          })
-        );
-      })
-    );
+    let [resSignatures, resDateOfIssue, resContactVeterinary, resContactFarmer] = await Promise.all([
+      conn.query(querySignature),
+      conn.query(queryDateOfIssue),
+      conn.query(queryContactVeterinary),
+      conn.query(queryContactFarmer)
+    ]);
+
+    const signatureIds = resSignatures.toArray().map(row => row.recordId);
+    const dateOfIssueIds = resDateOfIssue.toArray().map(row => row.recordId);
+    const contactVeterinaryIds = resContactVeterinary.toArray().map(row => row.recordId);
+    const contactFarmerIds = resContactFarmer.toArray().map(row => row.recordId);
+
+    for (let i = 0; i < dataArray.length; i++) {
+      let data = dataArray[i];
+      data.AaDRecords.forEach(aadRecord => {
+        valuesAadRecords.push(`('${aadRecord[0]}', ${aadRecord[1]}, '${aadRecord[2]}', 
+                                  ${aadRecord[3]}, '${aadRecord[4]}', '${aadRecord[5]}', 
+                                  '${aadRecord[6]}', '${aadRecord[7]}', '${aadRecord[8]}', 
+                                  '${aadRecord[9]}', ${aadRecord[10]}, ${aadRecord[11]}, 
+                                  '${aadRecord[12]}', '${aadRecord[13]}', ${aadRecord[14]}, 
+                                  ${aadRecord[15]}, ${aadRecord[16]}, ${aadRecord[17]}, 
+                                  ${aadRecord[18]}, ${aadRecord[19]}, ${contactFarmerIds[i]}, 
+                                  ${contactVeterinaryIds[i]}, ${dateOfIssueIds[i]}, ${signatureIds[i]})`);
+      });
+    }
+
+    if (valuesAadRecords.length > 0) {
+      queryAadRecords += valuesAadRecords.join(",") + " RETURNING recordId;";
+      await conn.query(queryAadRecords);
+    }
+
   } catch (error) {
     console.error("Error inserting data batch:", error);
   }
