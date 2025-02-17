@@ -1,19 +1,33 @@
-th{
+th {
+  color: black;
+  background-color: var(--table);
+}
+
+td {
   color: black;
 }
 
-td{
+h2 {
   color: black;
 }
 
-h2{
+div {
   color: black;
 }
 
-div{
-  color: black;
+th,
+td {
+  border: 1px solid #000000;
+  padding: 4px 24px 4px 24px;
 }
 
-th, td {
-  border: 1px solid #000000; 
+.report-content {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+}
+
+.total-antibiotics {
+  font-weight: 900;
+  margin-top: 20px;
 }

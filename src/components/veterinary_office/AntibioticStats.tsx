@@ -18,21 +18,30 @@ const AntibioticsTable = ({ data }) => {
   });
 
   return (
-    <div>
-      <h3>Antibiotics Usage by Species</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Species</th>
-            <th>Total Antibiotics</th>
-            <th>Avg Antibiotics Per Animal</th>
-          </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
+    <div className="report-content">
       <div>
-        Total Antibiotics Used Across All Animals:{" "}
-        {totalAntibioticsAcrossAllAnimals}
+        <h3>Antibiotics Usage by Species</h3>
+        <hr />
+        <p className="total-antibiotics">
+          Total Antibiotics Used Across All Animals:{" "}
+          {totalAntibioticsAcrossAllAnimals}
+        </p>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>Species</th>
+              <th>Total Antibiotics</th>
+              <th>Avg Antibiotics Per Animal</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+        {/* <div className="total-antibiotics">
+          Total Antibiotics Used Across All Animals:{" "}
+          {totalAntibioticsAcrossAllAnimals}
+        </div> */}
       </div>
     </div>
   );

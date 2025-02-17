@@ -194,7 +194,7 @@ const Vetenary_office_Page = () => {
           Reset
         </button>
       </div>
-      <div>
+      <div className="content-container">
         {laoding ? (
           <Loading progress={loadingProgress} />
         ) : tableData ? (
