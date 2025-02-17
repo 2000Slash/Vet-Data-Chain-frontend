@@ -1,59 +1,94 @@
-.filter-container, .appliedFilters-container {
-    display: flex; 
-    width: 50em;
+.filter-container {
+  display: flex;
+  width: 50em;
+  align-items: center;
+  padding: 0.25em;
+  padding-left: 1em;
+  gap: 1em;
 }
 
-.dropdown, .input-field-container {
-    padding-right: 1em;
-    padding-top: 0.5em;
+.dropdown {
+  min-width: 200px;
+  position: relative;
 }
 
-.menu, .appliedFilters-list {
-    list-style-type: none; 
-    padding: 0; 
-    margin: 0; 
+.dropdown:nth-child(3) {
+  min-width: 120px;
 }
 
-.menu-item {
-    margin: 5px;
+.dropdown select {
+  background-color: #4a4a4a;
+  color: white;
+  height: 40px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 0 10px;
+  cursor: pointer;
+  appearance: none;
 }
 
-.appliedFilters-container {
-    margin-left: 20px;
+.dropdown::after {
+  content: "";
+  position: absolute;
+  right: 1.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid white;
+  pointer-events: none;
 }
 
-.add-button, .remove-button {
-    border-radius: 50px;
-    margin-left: 10px;
-}
-
-.add-button {
-    background-color: #4CAF50;
-}
-
-.remove-button {
-    background-color: red;
-}
-
-.menu-button-disabled {
-    opacity: 0.8;
-}
-
-.menu-button, .input-button {
-    background-color: #4a4a4a;
-    color: white;
-    height: 40px;
-    width: 100%;
-}
-
-.input-button.function{
-    width: 15em;
-    margin-top: 2em;
+.input-field-container {
+  display: flex;
+  align-items: center;
+  min-width: 200px;
 }
 
 .input-field {
-    height: 40px;
-    border: none;
-    border-radius: 8px;
-    padding-left: 5px;
+  height: 40px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding-left: 10px;
+  background-color: #4a4a4a;
+  color: white;
+}
+
+.input-field::placeholder {
+  color: #ffffff80;
+}
+
+.add-button,
+.remove-button {
+  border-radius: 50px;
+  margin-left: 10px;
+  height: 40px;
+  width: 40px;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-button {
+  background-color: #008000;
+  color: white;
+}
+
+.remove-button {
+  background-color: #b00000;
+  color: white;
+}
+
+select:disabled,
+.input-field:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
 }

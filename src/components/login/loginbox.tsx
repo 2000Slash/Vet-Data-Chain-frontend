@@ -1,10 +1,11 @@
 import { nodeInteraction } from "@waves/waves-transactions";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getKeeperWalletURL, getKeeperWalletAddress, getMyRole } from "../../utils/utils";
-import "../../styles/styles.css";
-import "../../styles/details/loginbox.css";
-
+import {
+  getKeeperWalletURL,
+  getKeeperWalletAddress,
+  getMyRole,
+} from "../../utils/utils";
 import "../../styles/styles.css";
 import "../../styles/details/loginbox.css";
 
@@ -13,35 +14,32 @@ const Login_box = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const rerouting = async () => {
- 
-    if (typeof KeeperWallet !== 'undefined') {
-      let locked = (await KeeperWallet.publicState()).locked
+    if (typeof KeeperWallet !== "undefined") {
+      let locked = (await KeeperWallet.publicState()).locked;
       if (locked) {
-        KeeperWallet.auth({ data: 'Please unlock your wallet' })
+        KeeperWallet.auth({ data: "Please unlock your wallet" })
           .then(async (authData) => {
             try {
               let role = await getMyRole();
               navigate(`/${role}`);
             } catch (error) {
-              console.error('Error in reroute:', error);
+              console.error("Error in reroute:", error);
             }
           })
           .catch((error) => {
-            console.error('Failed to unlock the wallet:', error);
+            console.error("Failed to unlock the wallet:", error);
           });
       } else {
         try {
           let role = await getMyRole();
           navigate(`/${role}`);
         } catch (error) {
-          console.error('Error in reroute:', error);
+          console.error("Error in reroute:", error);
         }
       }
     } else {
-      console.error('Keeper Wallet is not installed');
+      console.error("Keeper Wallet is not installed");
     }
-  
-    
   };
 
   const handleKeeperWalletLogin = () => {

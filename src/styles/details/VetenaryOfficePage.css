@@ -1,3 +1,31 @@
-.containerfilter{
-    padding-left: 2em;
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.filters-section {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 1em;
+}
+
+.FilterButtons {
+  display: flex;
+  gap: 1em;
+  padding-left: 1em;
+  margin-top: 0.25em;
+}
+
+.apply-Button {
+  background-color: #008000;
+}
+.reset-Button {
+  background-color: #b00000;
+}
+.table-section {
+  flex: 1;
+}
+.report-section {
+  margin-top: auto;
 }

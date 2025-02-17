@@ -23,7 +23,7 @@ const Header = ({ role = "" }: HeaderProps) => {
       <div className="logo-container">
         <div className="logo-circle"></div>
       </div>
-      <div className="title-container">
+      <div className="title-Header-Nav">
         <h1>Vet-Data-Chain</h1>
       </div>
     </div>

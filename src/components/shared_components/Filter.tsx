@@ -52,14 +52,7 @@ const nameDictionary = {
   signatureFarmer: "Farmer Signature",
 };
 
-const operators = [
-  ">",
-  "<",
-  "=",
-  ">=",
-  "<=",
-  "!=",
-];
+const operators = [">", "<", "=", ">=", "<=", "!="];
 
 const Filter = ({
   onFilterSubmit,
@@ -86,10 +79,10 @@ const Filter = ({
   isAdded?: boolean;
   isDisabled?: boolean;
 }) => {
-  const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
-  const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
-  const [openOperatorFilter, setOpenOperatorFilter] = React.useState(false);
-  const [openInputFilter, setOpenInputFilter] = React.useState(false);
+  // const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
+  // const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
+  // const [openOperatorFilter, setOpenOperatorFilter] = React.useState(false);
+  // const [openInputFilter, setOpenInputFilter] = React.useState(false);
   const [selectedTable, setSelectedTable] =
     React.useState(initialSelectedTable);
   const [selectedAttribute, setSelectedAttribute] = React.useState(
@@ -101,9 +94,7 @@ const Filter = ({
   const [inputValue, setInputValue] = React.useState(initialInputValue);
   const [secondMenuVisible, setSecondMenuVisible] = React.useState(false);
 
-  const handleOpenFirstFilter = async () => {
-    setOpenFirstFilter(!openFirstFilter);
-
+  React.useEffect(() => {
     getAllTableNamess()
       .then((data) => {
         setTableNames(data);
@@ -111,30 +102,54 @@ const Filter = ({
       .catch((error) => {
         console.error("Error fetching table names:", error);
       });
-  };
+  }, []);
 
-  const handleOpenSecondFilter = async () => {
-    setOpenSecondFilter(!openSecondFilter);
-    setOpenInputFilter(!openInputFilter);
+  React.useEffect(() => {
+    if (selectedTable && selectedTable !== "Table") {
+      getAllFields(selectedTable)
+        .then((data) => {
+          setFieldNames(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching field names:", error);
+        });
+    }
+  }, [selectedTable]);
 
-    getAllFields(selectedTable)
-      .then((data) => {
-        setFieldNames(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching table names:", error);
-      });
-  };
+  // const handleOpenFirstFilter = async () => {
+  //   setOpenFirstFilter(!openFirstFilter);
 
-  const handleOpenOperatorFilter = () => {
-    setOpenOperatorFilter(!openOperatorFilter);
-  };
+  //   getAllTableNamess()
+  //     .then((data) => {
+  //       setTableNames(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching table names:", error);
+  //     });
+  // };
+
+  // const handleOpenSecondFilter = async () => {
+  //   setOpenSecondFilter(!openSecondFilter);
+  //   setOpenInputFilter(!openInputFilter);
+
+  //   getAllFields(selectedTable)
+  //     .then((data) => {
+  //       setFieldNames(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching table names:", error);
+  //     });
+  // };
+
+  // const handleOpenOperatorFilter = () => {
+  //   setOpenOperatorFilter(!openOperatorFilter);
+  // };
 
   const handleButtonInFirstFilter = async (
     buttonText: React.SetStateAction<string>
   ) => {
     setSelectedTable(buttonText);
-    setOpenFirstFilter(false);
+    //setOpenFirstFilter(false);
     setSecondMenuVisible(true);
   };
 
@@ -142,7 +157,7 @@ const Filter = ({
     buttonText: React.SetStateAction<string>
   ) => {
     setSelectedAttribute(buttonText);
-    setOpenSecondFilter(false);
+    //setOpenSecondFilter(false);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,14 +166,20 @@ const Filter = ({
 
   const handleButtonInOperatorFilter = (buttonText: string) => {
     setSelectedOperator(buttonText);
-    setOpenOperatorFilter(false);
+    //setOpenOperatorFilter(false);
   };
 
   const handleFilterClick = () => {
     if (selectedTable !== "Table ID" && selectedAttribute && inputValue) {
       console.log("Werte:", selectedTable, selectedAttribute, inputValue);
       console.log("Filter index:", filterIndex);
-      onFilterSubmit(selectedTable, selectedAttribute, inputValue, filterIndex, selectedOperator);
+      onFilterSubmit(
+        selectedTable,
+        selectedAttribute,
+        inputValue,
+        filterIndex,
+        selectedOperator
+      );
     } else {
       alert("Please fill in all fields.");
     }
@@ -175,113 +196,76 @@ const Filter = ({
     <>
       <div className="filter-container">
         <div className="dropdown">
-          <button
-            className={`menu-button ${
-              isDisabled ? "menu-button-disabled" : ""
-            }`}
-            onClick={handleOpenFirstFilter}
+          <select
+            className={isDisabled ? "menu-button-disabled" : ""}
+            onChange={(e) => handleButtonInFirstFilter(e.target.value)}
             disabled={isDisabled}
+            value={selectedTable}
           >
-            {selectedTable}
-          </button>
-          {openFirstFilter ? (
-            <ul className="menu">
-              {tableNames.map((table, index) => {
-                let displayText = nameDictionary[table.name];
-
-                return (
-                  <li key={index} className="menu-item">
-                    <button
-                      className="menu-button"
-                      onClick={() => handleButtonInFirstFilter(table.name)}
-                    >
-                      {displayText}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
+            <option value="Table">Table</option>
+            {tableNames.map((table, index) => (
+              <option key={index} value={table.name}>
+                {nameDictionary[table.name]}
+              </option>
+            ))}
+          </select>
         </div>
 
         {secondMenuVisible && (
           <div className="dropdown">
-            <button
-              className={`menu-button ${
-                isDisabled ? "menu-button-disabled" : ""
-              }`}
-              onClick={handleOpenSecondFilter}
+            <select
+              className={isDisabled ? "menu-button-disabled" : ""}
+              onChange={(e) => handleButtonInSecondFilter(e.target.value)}
               disabled={isDisabled}
+              value={selectedAttribute}
             >
-              {selectedAttribute || selectedTable}
-            </button>
-            {openSecondFilter ? (
-              <ul className="menu">
-                {fieldNames.map((field, index) => (
-                  <li key={index} className="menu-item">
-                    <button
-                      className="menu-button"
-                      onClick={() => handleButtonInSecondFilter(field.name)}
-                    >
-                      {nameDictionary[field.name]}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+              <option value="">{selectedTable}</option>
+              {fieldNames.map((field, index) => (
+                <option key={index} value={field.name}>
+                  {nameDictionary[field.name]}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 
-        {selectedTable !== "Table ID" &&
-          selectedAttribute && (
+        {selectedTable !== "Table ID" && selectedAttribute && (
           <div className="dropdown">
-            <button
-              className={`menu-button ${
-                isDisabled ? "menu-button-disabled" : ""
-              }`}
-              onClick={handleOpenOperatorFilter}
+            <select
+              className={isDisabled ? "menu-button-disabled" : ""}
+              onChange={(e) => handleButtonInOperatorFilter(e.target.value)}
               disabled={isDisabled}
+              value={selectedOperator}
             >
-              {selectedOperator || "Operator"}
-            </button>
-            {openOperatorFilter && (
-              <ul className="menu">
-                {operators.map((op, index) => (
-                  <li key={index} className="menu-item">
-                    <button
-                      className="menu-button"
-                      onClick={() => handleButtonInOperatorFilter(op)}
-                    >
-                      {op}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+              <option value="">Operator</option>
+              {operators.map((op, index) => (
+                <option key={index} value={op}>
+                  {op}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 
-        {selectedTable !== "Table ID" &&
-          selectedAttribute &&
-           (
-            <div className="input-field-container">
-              <input
-                id="inputField"
-                className="input-field"
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                placeholder="Type your filter text"
-                disabled={isDisabled}
-              />
-              <button
-                className={`add-button ${isAdded ? "remove-button" : ""}`}
-                onClick={isAdded ? handleRemoveClick : handleFilterClick}
-              >
-                {isAdded ? "-" : "+"}
-              </button>
-            </div>
-          )}
+        {selectedTable !== "Table ID" && selectedAttribute && (
+          <div className="input-field-container">
+            <input
+              id="inputField"
+              className="input-field"
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="Type your filter text"
+              disabled={isDisabled}
+            />
+            <button
+              className={`add-button ${isAdded ? "remove-button" : ""}`}
+              onClick={isAdded ? handleRemoveClick : handleFilterClick}
+            >
+              {isAdded ? "-" : "+"}
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

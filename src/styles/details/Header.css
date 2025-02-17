@@ -20,21 +20,23 @@
 .role-text h2 {
   margin: 0;
   font-size: 2rem;
+  color: white;
 }
 
 .login-header {
   justify-content: center;
 }
 
-.title-container {
+.title-Header-Nav {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.title-container h1 {
+.title-Header-Nav h1 {
   margin: 0;
   font-size: 2.8rem;
+  color: white;
 }
 
 .logo-container {

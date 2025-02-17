@@ -6,7 +6,7 @@ import Loading from "../components/shared_components/Loading";
 import { loadAllVetOfficeData } from "../utils/utils";
 import { filterDatabase, getAntibioticSummary } from "../utils/sqlRequests";
 import Filter from "../components/shared_components/Filter";
-import "../styles/details/VetenaryOfficePage.css"
+import "../styles/details/VetenaryOfficePage.css";
 
 const Vetenary_office_Page = () => {
   const [tableData, setTableData] = useState<any>(null);
@@ -18,13 +18,13 @@ const Vetenary_office_Page = () => {
   const [textValue, setTextValue] = useState("");
   const [resetKey, setResetKey] = useState(0);
   const [buttonStatus, setButtonStatus] = useState<boolean[]>([false]);
-  const [visibleReport, setVisibleReport] = useState(false)
+  const [visibleReport, setVisibleReport] = useState(false);
 
   type FilterType = {
     table: string;
     attribute: string;
     value: string;
-    operator?: string
+    operator?: string;
   };
   const [filters, setFilters] = useState<FilterType[]>([]);
 
@@ -40,7 +40,7 @@ const Vetenary_office_Page = () => {
         selectedTable,
         selectedAttribute,
         inputValue,
-        selectedOperator
+        selectedOperator,
       ];
       console.log("Index filter added:", filterIndex);
       const updatedFilter = [...filters, additionalFilter];
@@ -126,7 +126,7 @@ const Vetenary_office_Page = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setLoadingProgress(0); 
+        setLoadingProgress(0);
         await loadAllVetOfficeData(setLoadingProgress);
         const dataForTable = await filterDatabase("aadRecords", []);
         getAntibioticSummary([])
@@ -147,9 +147,9 @@ const Vetenary_office_Page = () => {
   }, []);
 
   return (
-    <div>
+    <div className="page-container">
       <Header role="Veterinary Office" />
-      <div>
+      <div className="filters-section">
         <div className="containerfilter">
           <Filter
             key={resetKey}
@@ -162,12 +162,11 @@ const Vetenary_office_Page = () => {
             filterIndex={0}
             isDisabled={buttonStatus[0]}
           />
-        </div>
 
-        {filters.length > 0 &&
-          filters.map((filter, index) => (
-            <div key={index}>
+          {filters.length > 0 &&
+            filters.map((filter, index) => (
               <Filter
+                key={index}
                 onFilterSubmit={handleFilterSubmit}
                 initialSelectedTable={filter.table}
                 initialSelectedAttribute={filter.attribute}
@@ -177,14 +176,21 @@ const Vetenary_office_Page = () => {
                 isAdded={buttonStatus[index + 1]}
                 isDisabled={buttonStatus[index + 1]}
               />
-            </div>
-          ))}
+            ))}
+        </div>
       </div>
-      <div className="containerfilter">
-        <button className="input-button function " onClick={handleApplyFilters}>
+
+      <div className="FilterButtons">
+        <button
+          className="input-button function apply-Button"
+          onClick={handleApplyFilters}
+        >
           Apply Filter
         </button>
-        <button  className="input-button function" onClick={handleResetButton}>
+        <button
+          className="input-button function reset-Button"
+          onClick={handleResetButton}
+        >
           Reset
         </button>
       </div>
@@ -193,11 +199,16 @@ const Vetenary_office_Page = () => {
           <Loading progress={loadingProgress} />
         ) : tableData ? (
           <>
-            <Table jsonData={tableData} />
-            <Report
-              tabNames={["Antibiotic stats", "Other Menu 1", "Other Menu 2"]}
-              jsonData={[reportData]}
-            />
+            <div className="table-section">
+              <Table jsonData={tableData} />
+            </div>
+
+            <div className="report-section">
+              <Report
+                tabNames={["Antibiotic stats", "Other Menu 1", "Other Menu 2"]}
+                jsonData={[reportData]}
+              />
+            </div>
           </>
         ) : (
           <p>No data available.</p>
