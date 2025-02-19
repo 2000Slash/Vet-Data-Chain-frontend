@@ -38,10 +38,6 @@ const AntibioticsTable = ({ data }) => {
           </thead>
           <tbody>{rows}</tbody>
         </table>
-        {/* <div className="total-antibiotics">
-          Total Antibiotics Used Across All Animals:{" "}
-          {totalAntibioticsAcrossAllAnimals}
-        </div> */}
       </div>
     </div>
   );

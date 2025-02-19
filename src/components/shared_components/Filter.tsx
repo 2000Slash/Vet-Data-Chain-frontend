@@ -79,10 +79,6 @@ const Filter = ({
   isAdded?: boolean;
   isDisabled?: boolean;
 }) => {
-  // const [openFirstFilter, setOpenFirstFilter] = React.useState(false);
-  // const [openSecondFilter, setOpenSecondFilter] = React.useState(false);
-  // const [openOperatorFilter, setOpenOperatorFilter] = React.useState(false);
-  // const [openInputFilter, setOpenInputFilter] = React.useState(false);
   const [selectedTable, setSelectedTable] =
     React.useState(initialSelectedTable);
   const [selectedAttribute, setSelectedAttribute] = React.useState(
@@ -116,40 +112,10 @@ const Filter = ({
     }
   }, [selectedTable]);
 
-  // const handleOpenFirstFilter = async () => {
-  //   setOpenFirstFilter(!openFirstFilter);
-
-  //   getAllTableNamess()
-  //     .then((data) => {
-  //       setTableNames(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching table names:", error);
-  //     });
-  // };
-
-  // const handleOpenSecondFilter = async () => {
-  //   setOpenSecondFilter(!openSecondFilter);
-  //   setOpenInputFilter(!openInputFilter);
-
-  //   getAllFields(selectedTable)
-  //     .then((data) => {
-  //       setFieldNames(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching table names:", error);
-  //     });
-  // };
-
-  // const handleOpenOperatorFilter = () => {
-  //   setOpenOperatorFilter(!openOperatorFilter);
-  // };
-
   const handleButtonInFirstFilter = async (
     buttonText: React.SetStateAction<string>
   ) => {
     setSelectedTable(buttonText);
-    //setOpenFirstFilter(false);
     setSecondMenuVisible(true);
   };
 
@@ -157,7 +123,6 @@ const Filter = ({
     buttonText: React.SetStateAction<string>
   ) => {
     setSelectedAttribute(buttonText);
-    //setOpenSecondFilter(false);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,7 +131,6 @@ const Filter = ({
 
   const handleButtonInOperatorFilter = (buttonText: string) => {
     setSelectedOperator(buttonText);
-    //setOpenOperatorFilter(false);
   };
 
   const handleFilterClick = () => {

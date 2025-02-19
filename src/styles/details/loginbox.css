@@ -70,7 +70,7 @@
   color: var(--text-primary);
 }
 
-.modal-overlay {
+.info-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -80,25 +80,33 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
-.modal-content {
-  background-color: var(--card-bg);
-  padding: 20px;
-  padding-top: 50px;
+.info-content {
+  background-color: #d9d9d9;
+  width: 400px;
+  height: 300px;
   border-radius: var(--border-radius);
   position: relative;
-  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info-content p {
+  text-align: center;
+  padding: 20px;
   color: var(--text-primary);
 }
 
-.modal-close {
+.info-close {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  right: 15px;
   border: none;
   background: none;
-  font-weight: 900;
+  font-size: 20px;
   cursor: pointer;
   color: var(--text-primary);
 }

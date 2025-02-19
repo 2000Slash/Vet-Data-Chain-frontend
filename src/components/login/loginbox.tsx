@@ -69,6 +69,19 @@ const Login_box = () => {
       <button className="login-button" onClick={handleKeeperWalletLogin}>
         Login
       </button>
+      {showModal && (
+        <div className="info-overlay" onClick={() => setShowModal(false)}>
+          <div className="info-content" onClick={(e) => e.stopPropagation()}>
+            <button className="info-close" onClick={() => setShowModal(false)}>
+              ×
+            </button>
+            <p>
+              If you have not yet received your credentials file, please contact
+              your responsible veterinary office.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
