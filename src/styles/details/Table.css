@@ -1,22 +1,71 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.table-section {
+  min-height: 350px;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  height: auto;
+  margin-top: 20px;
+}
+
 .table {
   border-collapse: collapse;
   font-family: sans-serif;
   letter-spacing: 1px;
   margin: 2em;
+  width: calc(100% - 4em);
 }
 
-.table-container {
-  position: relative;
-  margin-top: 40px;
-  height: 55vh;
-  overflow-y: auto;
+.pagination {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.page-input-container {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
+}
+
+.page-input {
+  width: 70px;
+  height: 30px;
+  padding: 0 5px;
+  border: 1px solid black;
+  background-color: #d9d9d9;
+  color: var(--primary-text);
+  border-radius: 8px;
+}
+
+.FilterButtons {
+  display: flex;
+  gap: 1em;
+  padding-left: 2em;
+  margin: 0.3em 0;
 }
 
 .table thead {
-  position: sticky;
-  top: 0;
   background-color: #d9d9d9;
-  z-index: 1;
+}
+
+.report-section {
+  margin-top: auto;
 }
 
 .table th {
@@ -42,4 +91,27 @@
 .button {
   background-color: #4a4a4a;
   border: 1px solid black;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination-button {
+  background-color: #333333;
+  color: white;
+  border: 1px solid black;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.apply-Button {
+  background-color: #008000;
+}
+
+.reset-Button {
+  background-color: #b00000;
 }
