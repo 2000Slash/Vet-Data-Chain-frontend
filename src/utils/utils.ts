@@ -6,9 +6,9 @@ import { libs } from "@waves/waves-transactions";
 import axios from "axios";
 
 
-const vetOfficeAddress = "3N5dkUCjEV1XHmQo41oQknanomGGqp1AzYZ"
-const vetOfficepubKey = "ExvXsx8QX6qdSegQwH1o9GD278rzMuqbtRQ6dYAvPvT5"
-const vetOfficeSeed = "fresh zoo rural inflict gas absorb race deliver sister party task soup unfair prepare lab"
+const vetOfficeAddress = "3NB3RCegCvtRS6Qz8xqxJEWavuWzwFvnEuZ"
+const vetOfficepubKey = "4GDQXMoRasPBxga3JdLtCEufkVDMEsHFUNeDk4zW2hJM"
+const vetOfficeSeed = "nature aware mother law option burst spider annual town news eager broccoli globe ring borrow"
 const recipientPrivateKey = libs.crypto.privateKey(vetOfficeSeed);
 
 export async function fetchRegexData(
