@@ -23,5 +23,5 @@
     Follow the link in the Terminel (http://localhost:5174/)
 
 # Notes
-1. The Download phase decryption and Database inialisation takes some time about one minute. Do npt hit refresh during the login progress as it will nullify your initalisation process.
+1. The Download phase decryption and Database inialisation takes some time about one minute. Do not hit refresh during the login progress as it will nullify your initalisation process.
 2. If you have not imported the wallet correctly a redirect to an empty page will happen. Make sure that the Wallet that you imported is correct and on the test network. It should have about 558 Waves in the account. 
