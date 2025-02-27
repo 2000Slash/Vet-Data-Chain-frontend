@@ -20,7 +20,7 @@
   npm run dev
 ```
 ## Open the browser
-    Follow the link in the Terminel (http://localhost:5174/)
+    Follow the link in the Terminal (http://localhost:5174/)
 
 # Notes
 1. The Download phase decryption and Database initialization takes some time about one minute. Do not hit refresh during the login progress as it will nullify your initialisation process.
